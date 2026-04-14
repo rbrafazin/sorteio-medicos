@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}QR Code | Sorteio Medico{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4 py-lg-5">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-lg qr-card">
+            <div class="card-body p-4 p-lg-5 text-center">
+                <span class="badge rounded-pill text-bg-primary-subtle text-primary mb-3">Acesso por QR Code</span>
+                <h1 class="h2 fw-bold mb-3">Compartilhe o formulario com os participantes</h1>
+                <p class="text-secondary mb-4">
+                    Escaneie o QR Code abaixo para abrir diretamente a pagina de cadastro.
+                </p>
+
+                <div class="qr-frame mx-auto mb-4">
+                    <img src="{{ qr_image_url }}" alt="QR Code do formulario" class="img-fluid">
+                </div>
+
+                <div class="form-url-box mx-auto mb-4">
+                    <small class="text-uppercase fw-semibold text-secondary">URL do formulario</small>
+                    <p class="mb-0 text-break">{{ form_url }}</p>
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    <a class="btn btn-primary" href="{{ qr_image_url }}" download="qrcode-sorteio-medico.png">Baixar imagem</a>
+                    <a class="btn btn-outline-secondary" href="{{ url_for('main.register') }}">Voltar ao cadastro</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

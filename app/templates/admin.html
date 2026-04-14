@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Painel Admin | Sorteio Medico{% endblock %}
+
+{% block content %}
+<div class="row g-4 py-4">
+    <div class="col-12">
+        <div class="admin-header">
+            <div>
+                <span class="badge rounded-pill text-bg-light text-primary-emphasis mb-2">Area protegida</span>
+                <h1 class="h2 fw-bold mb-1">Painel de Sorteio</h1>
+                <p class="text-white-50 mb-0">Gerencie inscritos e realize o sorteio em tempo real.</p>
+            </div>
+            <div class="admin-actions">
+                <button id="drawButton" class="btn btn-warning btn-lg">Sortear Agora</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card border-0 shadow-lg winner-panel">
+            <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+                    <div>
+                        <small class="text-uppercase fw-semibold text-secondary">Ultimo resultado</small>
+                        <h2 class="h4 mb-1">Aguardando sorteio</h2>
+                        <p class="text-secondary mb-0" id="winnerSummary">Clique em "Sortear Agora" para selecionar um participante.</p>
+                    </div>
+                    <div class="winner-chip" id="winnerChip">Sem vencedor</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card border-0 shadow-lg">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nome</th>
+                                <th>CRM</th>
+                                <th>Telefone</th>
+                                <th>Codigo do Sorteio</th>
+                                <th>Cadastrado em</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if registrations %}
+                                {% for registration in registrations %}
+                                    <tr>
+                                        <td class="fw-semibold">{{ registration.nome }}</td>
+                                        <td>{{ registration.crm }}</td>
+                                        <td>{{ registration.telefone }}</td>
+                                        <td><span class="badge text-bg-primary-subtle text-primary-emphasis">{{ registration.codigo_sorteio }}</span></td>
+                                        <td>{{ registration.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-secondary">
+                                        Nenhum medico cadastrado ate o momento.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="winnerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <h3 class="modal-title h4 fw-bold">Vencedor do Sorteio</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body pt-3">
+                <div class="winner-modal-card">
+                    <small class="text-uppercase fw-semibold text-secondary">Participante selecionado</small>
+                    <h4 class="display-6 fw-bold mb-3" id="modalWinnerName">-</h4>
+                    <p class="mb-2"><strong>CRM:</strong> <span id="modalWinnerCrm">-</span></p>
+                    <p class="mb-2"><strong>Telefone:</strong> <span id="modalWinnerPhone">-</span></p>
+                    <p class="mb-0"><strong>Codigo:</strong> <span id="modalWinnerCode">-</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (() => {
+        const drawButton = document.getElementById('drawButton');
+        const winnerChip = document.getElementById('winnerChip');
+        const winnerSummary = document.getElementById('winnerSummary');
+        const winnerModalElement = document.getElementById('winnerModal');
+        const winnerModal = new bootstrap.Modal(winnerModalElement);
+
+        const setWinnerContent = (winner) => {
+            document.getElementById('modalWinnerName').textContent = winner.nome;
+            document.getElementById('modalWinnerCrm').textContent = winner.crm;
+            document.getElementById('modalWinnerPhone').textContent = winner.telefone;
+            document.getElementById('modalWinnerCode').textContent = winner.codigo_sorteio;
+            winnerChip.textContent = winner.nome;
+            winnerSummary.textContent = `${winner.nome} foi sorteado(a) no codigo ${winner.codigo_sorteio}.`;
+        };
+
+        drawButton.addEventListener('click', async () => {
+            drawButton.disabled = true;
+            drawButton.textContent = 'Sorteando...';
+
+            try {
+                const response = await fetch('{{ url_for("main.draw_winner") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    }
+                });
+
+                const payload = await response.json();
+
+                if (!response.ok) {
+                    winnerChip.textContent = 'Sem vencedor';
+                    winnerSummary.textContent = payload.message || 'Nao foi possivel realizar o sorteio.';
+                    return;
+                }
+
+                setWinnerContent(payload);
+                winnerModal.show();
+            } catch (error) {
+                winnerChip.textContent = 'Erro';
+                winnerSummary.textContent = 'Falha ao comunicar com o servidor.';
+            } finally {
+                drawButton.disabled = false;
+                drawButton.textContent = 'Sortear Agora';
+            }
+        });
+    })();
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Login Admin | Sorteio Medico{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4 py-lg-5">
+    <div class="col-lg-5 col-md-8">
+        <div class="card border-0 shadow-lg form-card">
+            <div class="card-body p-4 p-lg-5">
+                <div class="text-center mb-4">
+                    <span class="badge rounded-pill text-bg-warning-subtle text-warning-emphasis mb-3">Acesso restrito</span>
+                    <h1 class="h3 fw-bold mb-2">Entrar no painel administrativo</h1>
+                    <p class="text-secondary mb-0">Use as credenciais configuradas no ambiente de deploy.</p>
+                </div>
+
+                <form method="post" class="needs-validation" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-semibold" for="{{ form.username.id }}">{{ form.username.label.text }}</label>
+                            {{ form.username(class="form-control form-control-lg" + (" is-invalid" if form.username.errors else "")) }}
+                            {% for error in form.username.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold" for="{{ form.password.id }}">{{ form.password.label.text }}</label>
+                            {{ form.password(class="form-control form-control-lg" + (" is-invalid" if form.password.errors else "")) }}
+                            {% for error in form.password.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (() => {
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+{% endblock %}

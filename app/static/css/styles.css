@@ -1,0 +1,172 @@
+:root {
+    --brand-navy: #102542;
+    --brand-cyan: #1f7a8c;
+    --brand-ice: #e7f7fb;
+    --brand-gold: #f2b134;
+    --brand-sand: #f8f5ef;
+    --text-dark: #1f2937;
+}
+
+body {
+    min-height: 100vh;
+    color: var(--text-dark);
+    background:
+        radial-gradient(circle at top left, rgba(242, 177, 52, 0.22), transparent 30%),
+        radial-gradient(circle at top right, rgba(31, 122, 140, 0.28), transparent 28%),
+        linear-gradient(135deg, #0d1b2a 0%, #12395b 48%, #1f7a8c 100%);
+    background-attachment: fixed;
+}
+
+.page-shell {
+    min-height: 100vh;
+}
+
+.navbar-brand {
+    letter-spacing: 0.04em;
+}
+
+.hero-panel {
+    color: #fff;
+    padding: 1rem 0.25rem;
+}
+
+.stat-card {
+    min-width: 180px;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+}
+
+.stat-card small {
+    display: block;
+    color: rgba(255, 255, 255, 0.72);
+    margin-bottom: 0.25rem;
+}
+
+.form-card,
+.qr-card,
+.winner-panel,
+.table,
+.modal-content {
+    border-radius: 1.4rem;
+}
+
+.alert {
+    border-radius: 1rem;
+}
+
+.form-card,
+.qr-card,
+.winner-panel,
+.modal-content {
+    background: rgba(248, 245, 239, 0.96);
+    backdrop-filter: blur(10px);
+}
+
+.form-control,
+.btn,
+.badge {
+    border-radius: 0.9rem;
+}
+
+.form-control {
+    border: 1px solid rgba(16, 37, 66, 0.12);
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+}
+
+.form-control:focus {
+    border-color: rgba(31, 122, 140, 0.45);
+    box-shadow: 0 0 0 0.25rem rgba(31, 122, 140, 0.16);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--brand-cyan), var(--brand-navy));
+    border: none;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: linear-gradient(135deg, #1a6674, #0b1b34);
+}
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 1.4rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    color: #fff;
+}
+
+.admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.winner-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 180px;
+    min-height: 54px;
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(242, 177, 52, 0.18), rgba(31, 122, 140, 0.15));
+    font-weight: 700;
+    color: var(--brand-navy);
+}
+
+.qr-frame {
+    max-width: 320px;
+    padding: 1.2rem;
+    border-radius: 1.4rem;
+    background: #fff;
+    box-shadow: 0 20px 60px rgba(16, 37, 66, 0.14);
+}
+
+.form-url-box {
+    max-width: 520px;
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+    background: var(--brand-ice);
+}
+
+.auto-code-note {
+    padding: 1rem 1.1rem;
+    border-radius: 1rem;
+    background: rgba(31, 122, 140, 0.08);
+    border: 1px dashed rgba(16, 37, 66, 0.18);
+}
+
+.winner-modal-card {
+    padding: 1.4rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(135deg, rgba(242, 177, 52, 0.13), rgba(31, 122, 140, 0.08));
+}
+
+.table th,
+.table td {
+    padding: 1rem 1.1rem;
+}
+
+@media (max-width: 991.98px) {
+    .admin-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-actions {
+        width: 100%;
+    }
+
+    .admin-actions .btn {
+        width: 100%;
+    }
+}

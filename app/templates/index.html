@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro | Sorteio Medico{% endblock %}
+
+{% block content %}
+<div class="row align-items-center g-4 py-4 py-lg-5">
+    <div class="col-lg-5">
+        <div class="hero-panel">
+            <span class="badge rounded-pill text-bg-light text-primary-emphasis mb-3">Cadastro oficial</span>
+            <h1 class="display-6 fw-bold mb-3">Participe do sorteio medico com um cadastro rapido.</h1>
+            <p class="lead text-white-50 mb-4">
+                Preencha seus dados, confirme o codigo do evento e entre automaticamente na lista do sorteio.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <div class="stat-card">
+                    <small>Banco de dados</small>
+                    <strong>SQLite persistente</strong>
+                </div>
+                <div class="stat-card">
+                    <small>Acesso rapido</small>
+                    <strong>QR Code do formulario</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card form-card border-0 shadow-lg">
+            <div class="card-body p-4 p-lg-5">
+                <div class="mb-4">
+                    <h2 class="h3 fw-semibold mb-2">Formulario de Cadastro</h2>
+                    <p class="text-secondary mb-0">Preencha seus dados e o codigo do sorteio sera gerado automaticamente no envio.</p>
+                </div>
+
+                <form method="post" class="needs-validation" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-semibold" for="{{ form.nome.id }}">{{ form.nome.label.text }}</label>
+                            {{ form.nome(class="form-control form-control-lg" + (" is-invalid" if form.nome.errors else "")) }}
+                            {% for error in form.nome.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" for="{{ form.crm.id }}">{{ form.crm.label.text }}</label>
+                            {{ form.crm(class="form-control form-control-lg text-uppercase" + (" is-invalid" if form.crm.errors else "")) }}
+                            {% for error in form.crm.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" for="{{ form.telefone.id }}">{{ form.telefone.label.text }}</label>
+                            {{ form.telefone(class="form-control form-control-lg" + (" is-invalid" if form.telefone.errors else "")) }}
+                            {% for error in form.telefone.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-12">
+                            <div class="auto-code-note">
+                                <small class="text-uppercase fw-semibold text-secondary d-block mb-1">Codigo do Sorteio</small>
+                                <p class="mb-0">Gerado automaticamente apos a confirmacao do cadastro.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                        <a class="btn btn-outline-secondary" href="{{ url_for('main.qr_code_page') }}">Ver QR Code do formulario</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (() => {
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+{% endblock %}
