@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Length, Optional, Regexp
 class RegistrationForm(FlaskForm):
     PARTICIPANT_TYPE_CHOICES = [
         ("", "Escolha..."),
-        ("medico", "Medico"),
+        ("medico", "Médico"),
         ("estudante", "Estudante"),
     ]
     UF_CHOICES = [
