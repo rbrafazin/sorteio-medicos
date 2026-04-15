@@ -4,35 +4,35 @@
 
 {% block content %}
 <div class="row align-items-start g-4 py-3 py-lg-4">
-    <div class="col-lg-5">
+    <div class="col-lg-5 order-2 order-lg-1">
         <div class="page-intro">
             <p class="section-label mb-3">Cadastro</p>
-            <h1 class="page-title mb-3">Um formulário direto, rápido e sem etapas extras.</h1>
+            <h1 class="page-title mb-3">Um formulario direto, rapido e sem etapas extras.</h1>
             <p class="page-copy mb-4">
-                Informe nome, CRM e telefone. O código do sorteio é gerado automaticamente ao concluir o cadastro.
+                Cadastre medicos e estudantes no mesmo fluxo. O codigo do sorteio e gerado automaticamente ao concluir o cadastro.
             </p>
             <div class="info-stack">
                 <div class="info-row">
                     <span>Fluxo</span>
-                    <strong>Cadastro único</strong>
+                    <strong>Cadastro unico</strong>
                 </div>
                 <div class="info-row">
-                    <span> Código</span>
-                    <strong>Gerado após envio</strong>
+                    <span>Codigo</span>
+                    <strong>Gerado apos envio</strong>
                 </div>
                 <div class="info-row">
                     <span>Acesso</span>
-                    <strong>QR Code disponível</strong>
+                    <strong>QR Code disponivel</strong>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-7">
+    <div class="col-lg-7 order-1 order-lg-2">
         <div class="card surface-card border-0">
             <div class="card-body p-4 p-lg-5">
                 <div class="mb-4">
-                    <p class="section-label mb-2">Formulário</p>
+                    <p class="section-label mb-2">Formulario</p>
                     <h2 class="h3 fw-semibold mb-2">Dados do participante</h2>
                     <p class="text-secondary mb-0">O cadastro leva menos de um minuto.</p>
                 </div>
@@ -41,7 +41,15 @@
                     {{ form.hidden_tag() }}
 
                     <div class="row g-3">
-                        <div class="col-12">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold" for="{{ form.tipo_participante.id }}">{{ form.tipo_participante.label.text }}</label>
+                            {{ form.tipo_participante(class="form-select form-select-lg" + (" is-invalid" if form.tipo_participante.errors else "")) }}
+                            {% for error in form.tipo_participante.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-12 participant-only">
                             <label class="form-label fw-semibold" for="{{ form.nome.id }}">{{ form.nome.label.text }}</label>
                             {{ form.nome(class="form-control form-control-lg" + (" is-invalid" if form.nome.errors else "")) }}
                             {% for error in form.nome.errors %}
@@ -49,15 +57,39 @@
                             {% endfor %}
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4 crm-field doctor-only participant-only">
                             <label class="form-label fw-semibold" for="{{ form.crm.id }}">{{ form.crm.label.text }}</label>
-                            {{ form.crm(class="form-control form-control-lg text-uppercase" + (" is-invalid" if form.crm.errors else "")) }}
+                            {{ form.crm(class="form-control form-control-lg" + (" is-invalid" if form.crm.errors else "")) }}
                             {% for error in form.crm.errors %}
                                 <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-2 uf-field doctor-only participant-only">
+                            <label class="form-label fw-semibold" for="{{ form.uf.id }}">{{ form.uf.label.text }}</label>
+                            {{ form.uf(class="form-select form-select-lg uf-select" + (" is-invalid" if form.uf.errors else "")) }}
+                            {% for error in form.uf.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-4 cpf-field participant-only">
+                            <label class="form-label fw-semibold" for="{{ form.cpf.id }}">{{ form.cpf.label.text }}</label>
+                            {{ form.cpf(class="form-control form-control-lg" + (" is-invalid" if form.cpf.errors else "")) }}
+                            {% for error in form.cpf.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-6 participant-only">
+                            <label class="form-label fw-semibold" for="{{ form.email.id }}">{{ form.email.label.text }}</label>
+                            {{ form.email(class="form-control form-control-lg" + (" is-invalid" if form.email.errors else "")) }}
+                            {% for error in form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-6 participant-only">
                             <label class="form-label fw-semibold" for="{{ form.telefone.id }}">{{ form.telefone.label.text }}</label>
                             {{ form.telefone(class="form-control form-control-lg" + (" is-invalid" if form.telefone.errors else "")) }}
                             {% for error in form.telefone.errors %}
@@ -65,17 +97,21 @@
                             {% endfor %}
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-12 participant-only">
                             <div class="soft-note">
-                                <small class="section-label d-block mb-2">Código do Sorteio</small>
-                                <p class="mb-0">Gerado automaticamente após a confirmação do cadastro.</p>
+                                <small class="section-label d-block mb-2">Codigo do Sorteio</small>
+                                <p class="mb-0" id="categoryNote">Gerado automaticamente apos a confirmacao do cadastro.</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="d-grid gap-2 mt-4">
+                    <div class="selection-hint mt-4" id="selectionHint">
+                        Escolha a categoria para liberar os campos do cadastro.
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4 participant-actions" id="participantActions">
                         {{ form.submit(class="btn btn-primary btn-lg") }}
-                        <a class="btn btn-shell" href="{{ url_for('main.qr_code_page') }}">Ver QR Code do formulário</a>
+                        <a class="btn btn-shell" href="{{ url_for('main.qr_code_page') }}">Ver QR Code do formulario</a>
                     </div>
                 </form>
             </div>
@@ -88,6 +124,49 @@
 <script>
     (() => {
         const forms = document.querySelectorAll('.needs-validation');
+        const typeField = document.getElementById('{{ form.tipo_participante.id }}');
+        const participantFields = document.querySelectorAll('.participant-only');
+        const doctorOnlyFields = document.querySelectorAll('.doctor-only');
+        const crmField = document.getElementById('{{ form.crm.id }}');
+        const ufField = document.getElementById('{{ form.uf.id }}');
+        const categoryNote = document.getElementById('categoryNote');
+        const selectionHint = document.getElementById('selectionHint');
+        const participantActions = document.getElementById('participantActions');
+
+        const syncParticipantType = () => {
+            const hasType = typeField.value === 'medico' || typeField.value === 'estudante';
+            const isDoctor = typeField.value === 'medico';
+
+            participantFields.forEach((field) => {
+                field.classList.toggle('d-none', !hasType);
+            });
+            participantActions.classList.toggle('d-none', !hasType);
+            selectionHint.classList.toggle('d-none', hasType);
+
+            doctorOnlyFields.forEach((field) => {
+                field.classList.toggle('d-none', !isDoctor);
+            });
+
+            if (!hasType) {
+                crmField.value = '';
+                ufField.value = '';
+                categoryNote.textContent = 'Gerado automaticamente apos a confirmacao do cadastro.';
+                return;
+            }
+
+            if (!isDoctor) {
+                crmField.value = '';
+                ufField.value = '';
+                categoryNote.textContent = 'Para estudantes, o sorteio usa os dados pessoais sem exigir CRM ou UF.';
+                return;
+            }
+
+            categoryNote.textContent = 'Gerado automaticamente apos a confirmacao do cadastro.';
+        };
+
+        syncParticipantType();
+        typeField.addEventListener('change', syncParticipantType);
+
         Array.from(forms).forEach((form) => {
             form.addEventListener('submit', (event) => {
                 if (!form.checkValidity()) {

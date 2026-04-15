@@ -31,6 +31,22 @@ def generate_raffle_code() -> str:
     return f"MED-{randbelow(1_000_000):06d}"
 
 
+def normalize_cpf(value: str) -> str:
+    return "".join(char for char in value if char.isdigit())
+
+
+def normalize_email(value: str) -> str:
+    return value.strip().lower()
+
+
+def build_storage_crm(
+    tipo_participante: str, crm_number: str, crm_uf: str, cpf: str
+) -> str:
+    if tipo_participante == "medico":
+        return f"{crm_number}-{crm_uf}"
+    return f"EST-{cpf}"
+
+
 def get_public_form_url() -> str:
     public_base_url = current_app.config.get("PUBLIC_BASE_URL", "")
     register_path = url_for("main.register")
@@ -47,10 +63,10 @@ def admin_login_required(view_func):
         if not session.get("admin_authenticated"):
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify(
-                    {"message": "Sua sessão expirou. Faça o login novamente."}
+                    {"message": "Sua sessao expirou. Faca login novamente."}
                 ), 401
 
-            flash("Faça o login para acessar o painel administrativo.", "warning")
+            flash("Faca login para acessar o painel administrativo.", "warning")
             return redirect(url_for("main.admin_login", next=request.path))
 
         return view_func(*args, **kwargs)
@@ -94,7 +110,7 @@ def admin_login():
                 return redirect(next_url)
             return redirect(url_for("main.admin_panel"))
 
-        flash("Usuário ou senha inválidos.", "danger")
+        flash("Usuario ou senha invalidos.", "danger")
 
     return render_template("admin_login.html", form=form)
 
@@ -103,7 +119,7 @@ def admin_login():
 @admin_login_required
 def admin_logout():
     session.clear()
-    flash("Sessão encerrada com sucesso.", "info")
+    flash("Sessao encerrada com sucesso.", "info")
     return redirect(url_for("main.admin_login"))
 
 
@@ -112,17 +128,33 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
-        crm = form.crm.data.strip().upper()
+        tipo_participante = form.tipo_participante.data
+        crm_number = form.crm.data.strip()
+        crm_uf = form.uf.data.strip().upper()
+        email = normalize_email(form.email.data)
+        cpf = normalize_cpf(form.cpf.data)
+        telefone = form.telefone.data.strip()
+        crm = build_storage_crm(tipo_participante, crm_number, crm_uf, cpf)
 
-        if DoctorRegistration.query.filter_by(crm=crm).first():
-            flash("Este CRM já está cadastrado no sorteio.", "danger")
+        if (
+            tipo_participante == "medico"
+            and DoctorRegistration.query.filter_by(crm=crm).first()
+        ):
+            flash("Este CRM ja esta cadastrado no sorteio.", "danger")
+            return render_template("index.html", form=form)
+
+        if DoctorRegistration.query.filter_by(cpf=cpf).first():
+            flash("Este CPF ja esta cadastrado no sorteio.", "danger")
             return render_template("index.html", form=form)
 
         raffle_code = generate_raffle_code()
         registration = DoctorRegistration(
+            tipo_participante=tipo_participante,
             nome=form.nome.data.strip(),
             crm=crm,
-            telefone=form.telefone.data.strip(),
+            email=email,
+            cpf=cpf,
+            telefone=telefone,
             codigo_sorteio=raffle_code,
         )
 
@@ -131,14 +163,14 @@ def register():
         try:
             db.session.commit()
             flash(
-                f"Cadastro realizado com sucesso. Seu código do sorteio é {raffle_code}.",
+                f"Cadastro realizado com sucesso. Seu codigo do sorteio e {raffle_code}.",
                 "success",
             )
             return redirect(url_for("main.register"))
         except IntegrityError:
             db.session.rollback()
             flash(
-                "Este CRM já está cadastrado no sorteio.",
+                "Nao foi possivel salvar o cadastro. Verifique CRM, CPF e categoria.",
                 "danger",
             )
 
@@ -175,18 +207,43 @@ def admin_panel():
     registrations = DoctorRegistration.query.order_by(
         DoctorRegistration.criado_em.desc()
     ).all()
-    return render_template("admin.html", registrations=registrations)
+    doctor_count = sum(
+        1
+        for registration in registrations
+        if registration.tipo_participante == "medico"
+    )
+    student_count = sum(
+        1
+        for registration in registrations
+        if registration.tipo_participante == "estudante"
+    )
+    return render_template(
+        "admin.html",
+        registrations=registrations,
+        doctor_count=doctor_count,
+        student_count=student_count,
+    )
 
 
 @main_bp.route("/sortear", methods=["POST"])
 @admin_login_required
 def draw_winner():
-    total = DoctorRegistration.query.count()
+    tipo_participante = request.args.get("tipo", "").strip().lower()
+    query = DoctorRegistration.query
+
+    if tipo_participante in {"medico", "estudante"}:
+        query = query.filter_by(tipo_participante=tipo_participante)
+
+    total = query.count()
 
     if total == 0:
-        return jsonify(
-            {"message": "Nenhum cadastro encontrado para realizar o sorteio."}
-        ), 404
+        if tipo_participante == "medico":
+            message = "Nenhum medico cadastrado para realizar o sorteio."
+        elif tipo_participante == "estudante":
+            message = "Nenhum estudante cadastrado para realizar o sorteio."
+        else:
+            message = "Nenhum cadastro encontrado para realizar o sorteio."
+        return jsonify({"message": message}), 404
 
-    winner = DoctorRegistration.query.order_by(func.random()).first()
+    winner = query.order_by(func.random()).first()
     return jsonify(winner.to_dict())

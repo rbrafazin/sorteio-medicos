@@ -133,6 +133,14 @@ body::before {
     background: rgba(248, 247, 243, 0.95);
 }
 
+.selection-hint {
+    padding: 0.95rem 1rem;
+    border: 1px dashed var(--border);
+    border-radius: 1rem;
+    color: var(--muted);
+    background: rgba(255, 255, 255, 0.55);
+}
+
 .alert {
     border-radius: 1rem;
     box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
@@ -144,24 +152,75 @@ body::before {
 }
 
 .form-control,
+.form-select,
 .btn,
 .badge {
     border-radius: 0.95rem;
 }
 
-.form-control {
+.form-control,
+.form-select {
     border: 1px solid var(--border);
     background: rgba(255, 255, 255, 0.92);
+    min-height: 56px;
     padding-top: 0.9rem;
     padding-bottom: 0.9rem;
 }
 
-.form-control:focus {
+.crm-field {
+    flex: 0 0 28%;
+    max-width: 28%;
+}
+
+.uf-field {
+    flex: 0 0 92px;
+    max-width: 92px;
+    margin-right: 1.5rem;
+}
+
+.cpf-field {
+    flex: 1 1 0;
+    max-width: none;
+}
+
+.uf-select {
+    width: 92px;
+    min-width: 92px;
+    max-width: 92px;
+    padding-left: 0.7rem;
+    padding-right: 2rem;
+    text-align: center;
+    text-align-last: center;
+    background-position: right 0.65rem center;
+}
+
+@media (max-width: 767.98px) {
+    .crm-field,
+    .uf-field {
+        flex: 1 1 auto;
+        max-width: none;
+        margin-right: 0;
+    }
+
+    .cpf-field {
+        flex: 1 1 auto;
+    }
+
+    .uf-select {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+    }
+}
+
+.form-control:focus,
+.form-select:focus {
     border-color: rgba(31, 79, 70, 0.35);
     box-shadow: 0 0 0 0.25rem rgba(31, 79, 70, 0.12);
 }
 
 .btn {
+    min-height: 54px;
     padding: 0.8rem 1.15rem;
     font-weight: 600;
     border: 1px solid transparent;
@@ -331,5 +390,79 @@ body::before {
     .simple-table th,
     .simple-table td {
         padding: 0.9rem 1rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .page-intro {
+        padding-top: 0;
+    }
+
+    .page-title {
+        font-size: clamp(1.8rem, 8vw, 2.3rem);
+        line-height: 1.02;
+    }
+
+    .page-copy {
+        max-width: none;
+        margin-bottom: 1rem !important;
+        font-size: 0.98rem;
+    }
+
+    .info-stack {
+        gap: 0.65rem;
+    }
+
+    .info-row {
+        padding-bottom: 0.65rem;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 52px;
+        padding-top: 0.8rem;
+        padding-bottom: 0.8rem;
+        font-size: 16px;
+    }
+
+    .btn {
+        min-height: 52px;
+        font-size: 1rem;
+    }
+
+    .soft-note {
+        padding: 0.9rem 1rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .page-shell .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .site-header {
+        padding-top: 0.9rem !important;
+        padding-bottom: 0.9rem !important;
+    }
+
+    .site-brand {
+        font-size: 1rem;
+    }
+
+    .card-body.p-4.p-lg-5 {
+        padding: 1.1rem !important;
+    }
+
+    .page-title {
+        margin-bottom: 0.75rem !important;
+    }
+
+    .page-copy {
+        font-size: 0.94rem;
+    }
+
+    .info-stack {
+        display: none;
     }
 }

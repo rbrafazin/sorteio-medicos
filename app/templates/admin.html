@@ -7,12 +7,13 @@
     <div class="col-12">
         <div class="admin-toolbar">
             <div>
-                <p class="section-label mb-2">Área protegida</p>
+                <p class="section-label mb-2">Area protegida</p>
                 <h1 class="h2 fw-bold mb-1">Painel de sorteio</h1>
-                <p class="text-secondary mb-0">Acompanhe os inscritos e realize o sorteio quando quiser.</p>
+                <p class="text-secondary mb-0">Acompanhe os inscritos e realize sorteios separados para medicos e estudantes.</p>
             </div>
             <div class="admin-toolbar-actions">
-                <button id="drawButton" class="btn btn-warning btn-lg">Sortear Agora</button>
+                <button class="btn btn-warning btn-lg draw-button" data-type="medico" data-label="Medicos">Sortear Medicos</button>
+                <button class="btn btn-shell btn-lg draw-button" data-type="estudante" data-label="Estudantes">Sortear Estudantes</button>
             </div>
         </div>
     </div>
@@ -22,7 +23,7 @@
             <div class="card-body p-4">
                 <div class="row g-3 align-items-start">
                     <div class="col-lg-7">
-                        <p class="section-label mb-2">Último resultado</p>
+                        <p class="section-label mb-2">Ultimo resultado</p>
                         <h2 class="h4 mb-1">Aguardando sorteio</h2>
                         <p class="text-secondary mb-0" id="winnerSummary">Clique em "Sortear Agora" para selecionar um participante.</p>
                     </div>
@@ -32,6 +33,19 @@
                             <strong>{{ registrations|length }}</strong>
                         </div>
                     </div>
+                    <div class="col-sm-6 col-lg-2">
+                        <div class="metric-card">
+                            <span>Medicos</span>
+                            <strong>{{ doctor_count }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-2">
+                        <div class="metric-card">
+                            <span>Estudantes</span>
+                            <strong>{{ student_count }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-1"></div>
                     <div class="col-sm-6 col-lg-3">
                         <div class="metric-card metric-card-highlight">
                             <span>Vencedor</span>
@@ -50,10 +64,13 @@
                     <table class="table simple-table align-middle mb-0">
                         <thead>
                             <tr>
+                                <th>Categoria</th>
                                 <th>Nome</th>
                                 <th>CRM</th>
+                                <th>Email</th>
+                                <th>CPF</th>
                                 <th>Telefone</th>
-                                <th>Código do Sorteio</th>
+                                <th>Codigo do Sorteio</th>
                                 <th>Cadastrado em</th>
                             </tr>
                         </thead>
@@ -61,8 +78,11 @@
                             {% if registrations %}
                                 {% for registration in registrations %}
                                     <tr>
+                                        <td>{{ registration.participant_type_label }}</td>
                                         <td class="fw-semibold">{{ registration.nome }}</td>
-                                        <td>{{ registration.crm }}</td>
+                                        <td>{{ registration.display_crm }}</td>
+                                        <td>{{ registration.email or "-" }}</td>
+                                        <td>{{ registration.formatted_cpf }}</td>
                                         <td>{{ registration.telefone }}</td>
                                         <td><span class="table-code">{{ registration.codigo_sorteio }}</span></td>
                                         <td>{{ registration.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
@@ -70,8 +90,8 @@
                                 {% endfor %}
                             {% else %}
                                 <tr>
-                                    <td colspan="5" class="text-center py-5 text-secondary">
-                                        Nenhum médico cadastrado até o momento.
+                                    <td colspan="8" class="text-center py-5 text-secondary">
+                                        Nenhum participante cadastrado ate o momento.
                                     </td>
                                 </tr>
                             {% endif %}
@@ -95,9 +115,12 @@
                     <p class="section-label mb-2">Participante selecionado</p>
                     <h4 class="display-6 fw-bold mb-3" id="modalWinnerName">-</h4>
                     <div>
+                        <p class="mb-2"><strong>Categoria:</strong> <span id="modalWinnerType">-</span></p>
                         <p class="mb-2"><strong>CRM:</strong> <span id="modalWinnerCrm">-</span></p>
+                        <p class="mb-2"><strong>Email:</strong> <span id="modalWinnerEmail">-</span></p>
+                        <p class="mb-2"><strong>CPF:</strong> <span id="modalWinnerCpf">-</span></p>
                         <p class="mb-2"><strong>Telefone:</strong> <span id="modalWinnerPhone">-</span></p>
-                        <p class="mb-0"><strong>Código:</strong> <span id="modalWinnerCode">-</span></p>
+                        <p class="mb-0"><strong>Codigo:</strong> <span id="modalWinnerCode">-</span></p>
                     </div>
                 </div>
             </div>
@@ -109,7 +132,7 @@
 {% block scripts %}
 <script>
     (() => {
-        const drawButton = document.getElementById('drawButton');
+        const drawButtons = document.querySelectorAll('.draw-button');
         const winnerChip = document.getElementById('winnerChip');
         const winnerSummary = document.getElementById('winnerSummary');
         const winnerModalElement = document.getElementById('winnerModal');
@@ -117,43 +140,50 @@
 
         const setWinnerContent = (winner) => {
             document.getElementById('modalWinnerName').textContent = winner.nome;
+            document.getElementById('modalWinnerType').textContent = winner.tipo_participante_label;
             document.getElementById('modalWinnerCrm').textContent = winner.crm;
+            document.getElementById('modalWinnerEmail').textContent = winner.email;
+            document.getElementById('modalWinnerCpf').textContent = winner.cpf;
             document.getElementById('modalWinnerPhone').textContent = winner.telefone;
             document.getElementById('modalWinnerCode').textContent = winner.codigo_sorteio;
             winnerChip.textContent = winner.nome;
-            winnerSummary.textContent = `${winner.nome} foi sorteado(a) no código ${winner.codigo_sorteio}.`;
+            winnerSummary.textContent = `${winner.nome} foi sorteado(a) entre ${winner.tipo_participante_label.toLowerCase()} no codigo ${winner.codigo_sorteio}.`;
         };
 
-        drawButton.addEventListener('click', async () => {
-            drawButton.disabled = true;
-            drawButton.textContent = 'Sorteando...';
+        drawButtons.forEach((drawButton) => {
+            drawButton.addEventListener('click', async () => {
+                const originalLabel = drawButton.textContent;
+                const drawType = drawButton.dataset.type;
+                drawButton.disabled = true;
+                drawButton.textContent = 'Sorteando...';
 
-            try {
-                const response = await fetch('{{ url_for("main.draw_winner") }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': '{{ csrf_token() }}'
+                try {
+                    const response = await fetch(`{{ url_for("main.draw_winner") }}?tipo=${drawType}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': '{{ csrf_token() }}'
+                        }
+                    });
+
+                    const payload = await response.json();
+
+                    if (!response.ok) {
+                        winnerChip.textContent = 'Sem vencedor';
+                        winnerSummary.textContent = payload.message || 'Nao foi possivel realizar o sorteio.';
+                        return;
                     }
-                });
 
-                const payload = await response.json();
-
-                if (!response.ok) {
-                    winnerChip.textContent = 'Sem vencedor';
-                    winnerSummary.textContent = payload.message || 'Não foi possivel realizar o sorteio.';
-                    return;
+                    setWinnerContent(payload);
+                    winnerModal.show();
+                } catch (error) {
+                    winnerChip.textContent = 'Erro';
+                    winnerSummary.textContent = 'Falha ao comunicar com o servidor.';
+                } finally {
+                    drawButton.disabled = false;
+                    drawButton.textContent = originalLabel;
                 }
-
-                setWinnerContent(payload);
-                winnerModal.show();
-            } catch (error) {
-                winnerChip.textContent = 'Erro';
-                winnerSummary.textContent = 'Falha ao comunicar com o servidor.';
-            } finally {
-                drawButton.disabled = false;
-                drawButton.textContent = 'Sortear Agora';
-            }
+            });
         });
     })();
 </script>
