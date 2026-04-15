@@ -47,13 +47,26 @@ body::before {
 
 .site-brand {
     letter-spacing: 0.03em;
-    color: var(--text);
+    color: var(--primary);
     text-decoration: none;
 }
 
 .site-brand:hover,
 .site-brand:focus {
-    color: var(--text);
+    color: var(--primary-strong);
+}
+
+.qr-link {
+    color: var(--primary);
+    background: rgba(31, 79, 70, 0.06);
+    border-color: rgba(31, 79, 70, 0.18);
+}
+
+.qr-link:hover,
+.qr-link:focus {
+    color: var(--primary-strong);
+    background: rgba(31, 79, 70, 0.1);
+    border-color: rgba(31, 79, 70, 0.26);
 }
 
 .page-intro {

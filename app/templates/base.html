@@ -19,7 +19,7 @@
             <div class="container shell-container d-flex align-items-center justify-content-between gap-3">
                 <a class="navbar-brand site-brand fw-semibold" href="{{ url_for('main.register') }}">ABM</a>
                 <div class="d-flex flex-wrap justify-content-end gap-2">
-                    <a class="btn btn-shell btn-sm" href="{{ url_for('main.qr_code_page') }}">QR Code</a>
+                    <a class="btn btn-shell btn-sm qr-link" href="{{ url_for('main.qr_code_page') }}">QR Code</a>
                     {% if session.get('admin_authenticated') %}
                         <a class="btn btn-primary btn-sm" href="{{ url_for('main.admin_panel') }}">Painel Admin</a>
                         <form method="post" action="{{ url_for('main.admin_logout') }}" class="d-inline">
