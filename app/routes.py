@@ -104,7 +104,6 @@ def admin_login():
         if username_matches and password_matches:
             session.clear()
             session["admin_authenticated"] = True
-            flash("Login realizado com sucesso.", "success")
             next_url = request.args.get("next")
             if is_safe_redirect_target(next_url):
                 return redirect(next_url)
@@ -119,7 +118,6 @@ def admin_login():
 @admin_login_required
 def admin_logout():
     session.clear()
-    flash("Sessao encerrada com sucesso.", "info")
     return redirect(url_for("main.admin_login"))
 
 
