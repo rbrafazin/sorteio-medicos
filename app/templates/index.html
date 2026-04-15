@@ -1,35 +1,40 @@
 {% extends "base.html" %}
 
-{% block title %}Cadastro | Sorteio Medico{% endblock %}
+{% block title %}Cadastro | ABM{% endblock %}
 
 {% block content %}
-<div class="row align-items-center g-4 py-4 py-lg-5">
+<div class="row align-items-start g-4 py-3 py-lg-4">
     <div class="col-lg-5">
-        <div class="hero-panel">
-            <span class="badge rounded-pill text-bg-light text-primary-emphasis mb-3">Cadastro oficial</span>
-            <h1 class="display-6 fw-bold mb-3">Participe do sorteio medico com um cadastro rapido.</h1>
-            <p class="lead text-white-50 mb-4">
-                Preencha seus dados, confirme o codigo do evento e entre automaticamente na lista do sorteio.
+        <div class="page-intro">
+            <p class="section-label mb-3">Cadastro</p>
+            <h1 class="page-title mb-3">Um formulário direto, rápido e sem etapas extras.</h1>
+            <p class="page-copy mb-4">
+                Informe nome, CRM e telefone. O código do sorteio é gerado automaticamente ao concluir o cadastro.
             </p>
-            <div class="d-flex flex-wrap gap-3">
-                <div class="stat-card">
-                    <small>Banco de dados</small>
-                    <strong>SQLite persistente</strong>
+            <div class="info-stack">
+                <div class="info-row">
+                    <span>Fluxo</span>
+                    <strong>Cadastro único</strong>
                 </div>
-                <div class="stat-card">
-                    <small>Acesso rapido</small>
-                    <strong>QR Code do formulario</strong>
+                <div class="info-row">
+                    <span> Código</span>
+                    <strong>Gerado após envio</strong>
+                </div>
+                <div class="info-row">
+                    <span>Acesso</span>
+                    <strong>QR Code disponível</strong>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-lg-7">
-        <div class="card form-card border-0 shadow-lg">
+        <div class="card surface-card border-0">
             <div class="card-body p-4 p-lg-5">
                 <div class="mb-4">
-                    <h2 class="h3 fw-semibold mb-2">Formulario de Cadastro</h2>
-                    <p class="text-secondary mb-0">Preencha seus dados e o codigo do sorteio sera gerado automaticamente no envio.</p>
+                    <p class="section-label mb-2">Formulário</p>
+                    <h2 class="h3 fw-semibold mb-2">Dados do participante</h2>
+                    <p class="text-secondary mb-0">O cadastro leva menos de um minuto.</p>
                 </div>
 
                 <form method="post" class="needs-validation" novalidate>
@@ -61,16 +66,16 @@
                         </div>
 
                         <div class="col-12">
-                            <div class="auto-code-note">
-                                <small class="text-uppercase fw-semibold text-secondary d-block mb-1">Codigo do Sorteio</small>
-                                <p class="mb-0">Gerado automaticamente apos a confirmacao do cadastro.</p>
+                            <div class="soft-note">
+                                <small class="section-label d-block mb-2">Código do Sorteio</small>
+                                <p class="mb-0">Gerado automaticamente após a confirmação do cadastro.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
                         {{ form.submit(class="btn btn-primary btn-lg") }}
-                        <a class="btn btn-outline-secondary" href="{{ url_for('main.qr_code_page') }}">Ver QR Code do formulario</a>
+                        <a class="btn btn-shell" href="{{ url_for('main.qr_code_page') }}">Ver QR Code do formulário</a>
                     </div>
                 </form>
             </div>

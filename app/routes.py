@@ -46,9 +46,11 @@ def admin_login_required(view_func):
     def wrapped_view(*args, **kwargs):
         if not session.get("admin_authenticated"):
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-                return jsonify({"message": "Sua sessao expirou. Faca login novamente."}), 401
+                return jsonify(
+                    {"message": "Sua sessão expirou. Faça o login novamente."}
+                ), 401
 
-            flash("Faca login para acessar o painel administrativo.", "warning")
+            flash("Faça o login para acessar o painel administrativo.", "warning")
             return redirect(url_for("main.admin_login", next=request.path))
 
         return view_func(*args, **kwargs)
@@ -92,7 +94,7 @@ def admin_login():
                 return redirect(next_url)
             return redirect(url_for("main.admin_panel"))
 
-        flash("Usuario ou senha invalidos.", "danger")
+        flash("Usuário ou senha inválidos.", "danger")
 
     return render_template("admin_login.html", form=form)
 
@@ -101,7 +103,7 @@ def admin_login():
 @admin_login_required
 def admin_logout():
     session.clear()
-    flash("Sessao encerrada com sucesso.", "info")
+    flash("Sessão encerrada com sucesso.", "info")
     return redirect(url_for("main.admin_login"))
 
 
@@ -113,7 +115,7 @@ def register():
         crm = form.crm.data.strip().upper()
 
         if DoctorRegistration.query.filter_by(crm=crm).first():
-            flash("Este CRM ja esta cadastrado no sorteio.", "danger")
+            flash("Este CRM já está cadastrado no sorteio.", "danger")
             return render_template("index.html", form=form)
 
         raffle_code = generate_raffle_code()
@@ -129,14 +131,14 @@ def register():
         try:
             db.session.commit()
             flash(
-                f"Cadastro realizado com sucesso. Seu codigo do sorteio e {raffle_code}.",
+                f"Cadastro realizado com sucesso. Seu código do sorteio é {raffle_code}.",
                 "success",
             )
             return redirect(url_for("main.register"))
         except IntegrityError:
             db.session.rollback()
             flash(
-                "Este CRM ja esta cadastrado no sorteio.",
+                "Este CRM já está cadastrado no sorteio.",
                 "danger",
             )
 
@@ -170,7 +172,9 @@ def qr_code_image():
 @main_bp.route("/sorteio-admin")
 @admin_login_required
 def admin_panel():
-    registrations = DoctorRegistration.query.order_by(DoctorRegistration.criado_em.desc()).all()
+    registrations = DoctorRegistration.query.order_by(
+        DoctorRegistration.criado_em.desc()
+    ).all()
     return render_template("admin.html", registrations=registrations)
 
 
@@ -180,7 +184,9 @@ def draw_winner():
     total = DoctorRegistration.query.count()
 
     if total == 0:
-        return jsonify({"message": "Nenhum cadastro encontrado para realizar o sorteio."}), 404
+        return jsonify(
+            {"message": "Nenhum cadastro encontrado para realizar o sorteio."}
+        ), 404
 
     winner = DoctorRegistration.query.order_by(func.random()).first()
     return jsonify(winner.to_dict())
