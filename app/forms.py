@@ -48,11 +48,11 @@ class RegistrationForm(FlaskForm):
     nome = StringField(
         "Nome",
         validators=[
-            DataRequired(message="Informe o nome do medico."),
+            DataRequired(message="Informe o nome."),
             Length(min=3, max=120, message="O nome deve ter entre 3 e 120 caracteres."),
         ],
         render_kw={
-            "placeholder": "Dr(a). Nome Sobrenome",
+            "placeholder": "Nome completo",
             "autocomplete": "name",
         },
     )

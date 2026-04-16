@@ -14,11 +14,11 @@ class DoctorRegistration(db.Model):
         db.String(20), nullable=False, default="medico", index=True
     )
     nome = db.Column(db.String(120), nullable=False)
-    crm = db.Column(db.String(20), nullable=False, unique=True, index=True)
+    crm = db.Column(db.String(20), nullable=True, unique=True, index=True)
     email = db.Column(db.String(255), nullable=True, index=True)
-    cpf = db.Column(db.String(11), nullable=True, unique=True, index=True)
+    cpf = db.Column(db.String(11), nullable=False, unique=True, index=True)
     telefone = db.Column(db.String(20), nullable=False)
-    codigo_sorteio = db.Column(db.String(40), nullable=False, index=True)
+    codigo_sorteio = db.Column(db.String(40), nullable=False, unique=True, index=True)
     criado_em = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     @property
@@ -30,7 +30,11 @@ class DoctorRegistration(db.Model):
 
     @property
     def participant_type_label(self) -> str:
-        return "Medico" if self.tipo_participante == "medico" else "Estudante"
+        if self.tipo_participante == "medico":
+            return "Medico"
+        if self.tipo_participante == "estudante":
+            return "Estudante"
+        return "Nao informado"
 
     @property
     def display_crm(self) -> str:

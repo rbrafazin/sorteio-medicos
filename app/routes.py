@@ -27,8 +27,9 @@ from .models import DoctorRegistration, db
 main_bp = Blueprint("main", __name__)
 
 
-def generate_raffle_code() -> str:
-    return f"MED-{randbelow(1_000_000):06d}"
+def generate_raffle_code(tipo_participante: str) -> str:
+    prefix = "MED" if tipo_participante == "medico" else "EST"
+    return f"{prefix}-{randbelow(1_000_000):06d}"
 
 
 def normalize_cpf(value: str) -> str:
@@ -37,14 +38,6 @@ def normalize_cpf(value: str) -> str:
 
 def normalize_email(value: str) -> str:
     return value.strip().lower()
-
-
-def build_storage_crm(
-    tipo_participante: str, crm_number: str, crm_uf: str, cpf: str
-) -> str:
-    if tipo_participante == "medico":
-        return f"{crm_number}-{crm_uf}"
-    return f"EST-{cpf}"
 
 
 def get_public_form_url() -> str:
@@ -127,12 +120,13 @@ def register():
 
     if form.validate_on_submit():
         tipo_participante = form.tipo_participante.data
-        crm_number = form.crm.data.strip()
-        crm_uf = form.uf.data.strip().upper()
+        crm_number = (form.crm.data or "").strip()
+        crm_uf = (form.uf.data or "").strip().upper()
         email = normalize_email(form.email.data)
         cpf = normalize_cpf(form.cpf.data)
         telefone = form.telefone.data.strip()
-        crm = build_storage_crm(tipo_participante, crm_number, crm_uf, cpf)
+
+        crm = f"{crm_number}-{crm_uf}" if tipo_participante == "medico" else None
 
         if (
             tipo_participante == "medico"
@@ -145,7 +139,10 @@ def register():
             flash("Este CPF ja esta cadastrado no sorteio.", "danger")
             return render_template("index.html", form=form)
 
-        raffle_code = generate_raffle_code()
+        raffle_code = generate_raffle_code(tipo_participante)
+        while DoctorRegistration.query.filter_by(codigo_sorteio=raffle_code).first():
+            raffle_code = generate_raffle_code(tipo_participante)
+            
         registration = DoctorRegistration(
             tipo_participante=tipo_participante,
             nome=form.nome.data.strip(),
@@ -168,7 +165,7 @@ def register():
         except IntegrityError:
             db.session.rollback()
             flash(
-                "Nao foi possivel salvar o cadastro. Verifique CRM, CPF e categoria.",
+                "Nao foi possivel salvar o cadastro. Verifique os dados informados.",
                 "danger",
             )
 
