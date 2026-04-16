@@ -17,7 +17,7 @@ class DoctorRegistration(db.Model):
     crm = db.Column(db.String(20), nullable=True, unique=True, index=True)
     email = db.Column(db.String(255), nullable=True, index=True)
     cpf = db.Column(db.String(11), nullable=False, unique=True, index=True)
-    telefone = db.Column(db.String(20), nullable=False)
+    whatsapp = db.Column(db.String(20), nullable=False)
     codigo_sorteio = db.Column(db.String(40), nullable=False, unique=True, index=True)
     criado_em = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
@@ -49,7 +49,7 @@ class DoctorRegistration(db.Model):
             "crm": self.display_crm,
             "email": self.email or "-",
             "cpf": self.formatted_cpf,
-            "telefone": self.telefone,
+            "whatsapp": self.whatsapp,
             "codigo_sorteio": self.codigo_sorteio,
             "criado_em": self.criado_em.strftime("%d/%m/%Y %H:%M"),
         }

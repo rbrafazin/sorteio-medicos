@@ -124,7 +124,7 @@ def register():
         crm_uf = (form.uf.data or "").strip().upper()
         email = normalize_email(form.email.data)
         cpf = normalize_cpf(form.cpf.data)
-        telefone = form.telefone.data.strip()
+        whatsapp = form.whatsapp.data.strip()
 
         crm = f"{crm_number}-{crm_uf}" if tipo_participante == "medico" else None
 
@@ -149,7 +149,7 @@ def register():
             crm=crm,
             email=email,
             cpf=cpf,
-            telefone=telefone,
+            whatsapp=whatsapp,
             codigo_sorteio=raffle_code,
         )
 

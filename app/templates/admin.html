@@ -72,7 +72,7 @@
                                 <th>CRM</th>
                                 <th>Email</th>
                                 <th>CPF</th>
-                                <th>Telefone</th>
+                                <th>WhatsApp</th>
                                 <th>Codigo do Sorteio</th>
                                 <th>Cadastrado em</th>
                             </tr>
@@ -86,7 +86,7 @@
                                         <td>{{ registration.display_crm }}</td>
                                         <td>{{ registration.email or "-" }}</td>
                                         <td>{{ registration.formatted_cpf }}</td>
-                                        <td>{{ registration.telefone }}</td>
+                                        <td>{{ registration.whatsapp }}</td>
                                         <td><span class="table-code">{{ registration.codigo_sorteio }}</span></td>
                                         <td>{{ registration.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
                                     </tr>
@@ -122,7 +122,7 @@
                         <p class="mb-2"><strong>CRM:</strong> <span id="modalWinnerCrm">-</span></p>
                         <p class="mb-2"><strong>Email:</strong> <span id="modalWinnerEmail">-</span></p>
                         <p class="mb-2"><strong>CPF:</strong> <span id="modalWinnerCpf">-</span></p>
-                        <p class="mb-2"><strong>Telefone:</strong> <span id="modalWinnerPhone">-</span></p>
+                        <p class="mb-2"><strong>WhatsApp:</strong> <span id="modalWinnerWhatsapp">-</span></p>
                         <p class="mb-0"><strong>Codigo:</strong> <span id="modalWinnerCode">-</span></p>
                     </div>
                 </div>
@@ -147,7 +147,7 @@
             document.getElementById('modalWinnerCrm').textContent = winner.crm;
             document.getElementById('modalWinnerEmail').textContent = winner.email;
             document.getElementById('modalWinnerCpf').textContent = winner.cpf;
-            document.getElementById('modalWinnerPhone').textContent = winner.telefone;
+            document.getElementById('modalWinnerWhatsapp').textContent = winner.whatsapp;
             document.getElementById('modalWinnerCode').textContent = winner.codigo_sorteio;
             winnerChip.textContent = winner.nome;
             winnerSummary.textContent = `${winner.nome} foi sorteado(a) entre ${winner.tipo_participante_label.toLowerCase()} no codigo ${winner.codigo_sorteio}.`;

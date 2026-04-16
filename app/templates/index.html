@@ -90,9 +90,9 @@
                         </div>
 
                         <div class="col-md-6 participant-only">
-                            <label class="form-label fw-semibold" for="{{ form.telefone.id }}">{{ form.telefone.label.text }}</label>
-                            {{ form.telefone(class="form-control form-control-lg" + (" is-invalid" if form.telefone.errors else "")) }}
-                            {% for error in form.telefone.errors %}
+                            <label class="form-label fw-semibold" for="{{ form.whatsapp.id }}">{{ form.whatsapp.label.text }}</label>
+                            {{ form.whatsapp(class="form-control form-control-lg" + (" is-invalid" if form.whatsapp.errors else "")) }}
+                            {% for error in form.whatsapp.errors %}
                                 <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>

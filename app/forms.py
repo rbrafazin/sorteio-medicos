@@ -108,12 +108,12 @@ class RegistrationForm(FlaskForm):
             "autocomplete": "off",
         },
     )
-    telefone = StringField(
-        "Telefone",
+    whatsapp = StringField(
+        "WhatsApp",
         validators=[
-            DataRequired(message="Informe o telefone."),
+            DataRequired(message="Informe o WhatsApp."),
             Length(
-                min=10, max=20, message="O telefone deve ter entre 10 e 20 caracteres."
+                min=10, max=20, message="O WhatsApp deve ter entre 10 e 20 caracteres."
             ),
             Regexp(
                 r"^[0-9()\-\+\s]+$",
