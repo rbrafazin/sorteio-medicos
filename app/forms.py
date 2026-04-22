@@ -7,7 +7,7 @@ class RegistrationForm(FlaskForm):
     PARTICIPANT_TYPE_CHOICES = [
         ("", "Escolha..."),
         ("medico", "Médico"),
-        ("estudante", "Estudante"),
+        ("estudante", "Estudante/Profissional da Saúde"),
     ]
     UF_CHOICES = [
         ("", "UF..."),

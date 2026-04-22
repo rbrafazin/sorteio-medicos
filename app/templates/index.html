@@ -7,22 +7,22 @@
     <div class="col-lg-5 order-2 order-lg-1">
         <div class="page-intro">
             <p class="section-label mb-3">Cadastro</p>
-            <h1 class="page-title mb-3">Um formulário direto, rápido e sem etapas extras.</h1>
+            <h1 class="page-title mb-3">Garanta sua participação no sorteio do evento.</h1>
             <p class="page-copy mb-4">
-                Cadastre médicos e estudantes no mesmo fluxo. O código do sorteio é gerado automaticamente ao concluir o cadastro.
+                Preencha seus dados e receba automaticamente um código único para concorrer no sorteio.
             </p>
             <div class="info-stack">
                 <div class="info-row">
-                    <span>Fluxo</span>
-                    <strong>Cadastro único</strong>
+                    <span>Cadastro</span>
+                    <strong>Único por CPF</strong>
                 </div>
                 <div class="info-row">
                     <span>Código</span>
-                    <strong>Gerado após envio</strong>
+                    <strong>Gerado automaticamente</strong>
                 </div>
                 <div class="info-row">
-                    <span>Acesso</span>
-                    <strong>QR Code disponível</strong>
+                    <span>Segurança</span>
+                    <strong>Dados protegidos</strong>
                 </div>
             </div>
         </div>
@@ -42,65 +42,80 @@
 
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold" for="{{ form.tipo_participante.id }}">{{ form.tipo_participante.label.text }}</label>
-                            {{ form.tipo_participante(class="form-select form-select-lg" + (" is-invalid" if form.tipo_participante.errors else "")) }}
+                            <label class="form-label fw-semibold" for="{{ form.tipo_participante.id }}">{{
+                                form.tipo_participante.label.text }}<span class="required-mark">*</span></label>
+                            {{ form.tipo_participante(class="form-select form-select-lg" + (" is-invalid" if
+                            form.tipo_participante.errors else "")) }}
                             {% for error in form.tipo_participante.errors %}
-                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
 
                         <div class="col-12 participant-only">
-                            <label class="form-label fw-semibold" for="{{ form.nome.id }}">{{ form.nome.label.text }}</label>
-                            {{ form.nome(class="form-control form-control-lg" + (" is-invalid" if form.nome.errors else "")) }}
+                            <label class="form-label fw-semibold" for="{{ form.nome.id }}">{{ form.nome.label.text
+                                }}<span class="required-mark">*</span></label>
+                            {{ form.nome(class="form-control form-control-lg" + (" is-invalid" if form.nome.errors else
+                            "")) }}
                             {% for error in form.nome.errors %}
-                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
 
                         <div class="col-md-4 crm-field doctor-only participant-only">
-                            <label class="form-label fw-semibold" for="{{ form.crm.id }}">{{ form.crm.label.text }}</label>
-                            {{ form.crm(class="form-control form-control-lg" + (" is-invalid" if form.crm.errors else "")) }}
+                            <label class="form-label fw-semibold" for="{{ form.crm.id }}">{{ form.crm.label.text
+                                }}<span class="required-mark doctor-required-mark">*</span></label>
+                            {{ form.crm(class="form-control form-control-lg" + (" is-invalid" if form.crm.errors else
+                            "")) }}
                             {% for error in form.crm.errors %}
-                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
 
                         <div class="col-md-2 uf-field doctor-only participant-only">
-                            <label class="form-label fw-semibold" for="{{ form.uf.id }}">{{ form.uf.label.text }}</label>
-                            {{ form.uf(class="form-select form-select-lg uf-select" + (" is-invalid" if form.uf.errors else "")) }}
+                            <label class="form-label fw-semibold" for="{{ form.uf.id }}">{{ form.uf.label.text
+                                }}<span class="required-mark doctor-required-mark">*</span></label>
+                            {{ form.uf(class="form-select form-select-lg uf-select" + (" is-invalid" if form.uf.errors
+                            else "")) }}
                             {% for error in form.uf.errors %}
-                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
 
                         <div class="col-md-4 cpf-field participant-only">
-                            <label class="form-label fw-semibold" for="{{ form.cpf.id }}">{{ form.cpf.label.text }}</label>
-                            {{ form.cpf(class="form-control form-control-lg" + (" is-invalid" if form.cpf.errors else "")) }}
+                            <label class="form-label fw-semibold" for="{{ form.cpf.id }}">{{ form.cpf.label.text
+                                }}<span class="required-mark">*</span></label>
+                            {{ form.cpf(class="form-control form-control-lg" + (" is-invalid" if form.cpf.errors else
+                            "")) }}
                             {% for error in form.cpf.errors %}
-                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
 
                         <div class="col-md-6 participant-only">
-                            <label class="form-label fw-semibold" for="{{ form.email.id }}">{{ form.email.label.text }}</label>
-                            {{ form.email(class="form-control form-control-lg" + (" is-invalid" if form.email.errors else "")) }}
+                            <label class="form-label fw-semibold" for="{{ form.email.id }}">{{ form.email.label.text
+                                }}<span class="required-mark">*</span></label>
+                            {{ form.email(class="form-control form-control-lg" + (" is-invalid" if form.email.errors
+                            else "")) }}
                             {% for error in form.email.errors %}
-                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
 
                         <div class="col-md-6 participant-only">
-                            <label class="form-label fw-semibold" for="{{ form.whatsapp.id }}">{{ form.whatsapp.label.text }}</label>
-                            {{ form.whatsapp(class="form-control form-control-lg" + (" is-invalid" if form.whatsapp.errors else "")) }}
+                            <label class="form-label fw-semibold" for="{{ form.whatsapp.id }}">{{
+                                form.whatsapp.label.text }}<span class="required-mark">*</span></label>
+                            {{ form.whatsapp(class="form-control form-control-lg" + (" is-invalid" if
+                            form.whatsapp.errors else "")) }}
                             {% for error in form.whatsapp.errors %}
-                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
 
                         <div class="col-12 participant-only">
                             <div class="soft-note">
                                 <small class="section-label d-block mb-2">Código do Sorteio</small>
-                                <p class="mb-0" id="categoryNote">Gerado automaticamente após a confirmação do cadastro.</p>
+                                <p class="mb-0" id="categoryNote">Gerado automaticamente após a confirmação do cadastro.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -133,6 +148,124 @@
         const selectionHint = document.getElementById('selectionHint');
         const participantActions = document.getElementById('participantActions');
 
+        /* ── Regras de validação por campo ── */
+        const validationRules = {
+            '{{ form.tipo_participante.id }}': {
+                required: true,
+                validate(v) { return v === 'medico' || v === 'estudante'; },
+                message: 'Selecione a categoria.'
+            },
+            '{{ form.nome.id }}': {
+                required: true,
+                validate(v) { return v.trim().length >= 3 && v.trim().length <= 120; },
+                message: 'O nome deve ter entre 3 e 120 caracteres.'
+            },
+            '{{ form.crm.id }}': {
+                required: false, /* condicionalmente obrigatório */
+                validate(v) {
+                    if (typeField.value !== 'medico') return true;
+                    return /^\d{4,10}$/.test(v.trim());
+                },
+                message: 'Informe um CRM válido (4 a 10 dígitos).'
+            },
+            '{{ form.uf.id }}': {
+                required: false,
+                validate(v) {
+                    if (typeField.value !== 'medico') return true;
+                    return v.trim().length === 2;
+                },
+                message: 'Selecione a UF do CRM.'
+            },
+            '{{ form.cpf.id }}': {
+                required: true,
+                validate(v) { return /^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/.test(v.trim()); },
+                message: 'Informe um CPF válido com 11 dígitos.'
+            },
+            '{{ form.email.id }}': {
+                required: true,
+                validate(v) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.trim()); },
+                message: 'Informe um email válido.'
+            },
+            '{{ form.whatsapp.id }}': {
+                required: true,
+                validate(v) {
+                    const t = v.trim();
+                    return t.length >= 10 && t.length <= 20 && /^[0-9()\-+\s]+$/.test(t);
+                },
+                message: 'Informe um WhatsApp válido (10–20 caracteres).'
+            }
+        };
+
+        /* ── Aplica estado visual no campo ── */
+        function setFieldState(field, state) {
+            /* state: 'valid' | 'invalid' | 'neutral' */
+            field.classList.remove('is-valid', 'is-invalid');
+
+            /* Limpa feedback dinâmico anterior */
+            const existingFeedback = field.parentElement.querySelector('.js-feedback');
+            if (existingFeedback) existingFeedback.remove();
+
+            if (state === 'valid') {
+                field.classList.add('is-valid');
+            } else if (state === 'invalid') {
+                field.classList.add('is-invalid');
+                const rule = validationRules[field.id];
+                if (rule) {
+                    const fb = document.createElement('div');
+                    fb.className = 'invalid-feedback d-block js-feedback';
+                    fb.textContent = rule.message;
+                    field.parentElement.appendChild(fb);
+                }
+            }
+        }
+
+        /* ── Valida um campo individual ── */
+        function validateField(field) {
+            const rule = validationRules[field.id];
+            if (!rule) return;
+
+            const value = field.value || '';
+
+            /* Campo vazio e sem interação significativa = neutro */
+            if (!value.trim()) {
+                if (field._touched) {
+                    setFieldState(field, 'invalid');
+                } else {
+                    setFieldState(field, 'neutral');
+                }
+                return;
+            }
+
+            if (rule.validate(value)) {
+                setFieldState(field, 'valid');
+            } else {
+                setFieldState(field, 'invalid');
+            }
+        }
+
+        /* ── Liga eventos de validação em tempo real ── */
+        Object.keys(validationRules).forEach(id => {
+            const field = document.getElementById(id);
+            if (!field) return;
+
+            field.addEventListener('blur', () => {
+                field._touched = true;
+                validateField(field);
+            });
+
+            field.addEventListener('input', () => {
+                if (field._touched) {
+                    validateField(field);
+                }
+            });
+
+            field.addEventListener('change', () => {
+                field._touched = true;
+                validateField(field);
+            });
+        });
+
+        /* ── Lógica de visibilidade por tipo de participante ── */
         const syncParticipantType = () => {
             const hasType = typeField.value === 'medico' || typeField.value === 'estudante';
             const isDoctor = typeField.value === 'medico';
@@ -157,7 +290,12 @@
             if (!isDoctor) {
                 crmField.value = '';
                 ufField.value = '';
-                categoryNote.textContent = 'Para estudantes, o sorteio usa os dados pessoais sem exigir CRM ou UF.';
+                /* Limpa estados de CRM/UF quando muda pra estudante/profissional da saúde */
+                setFieldState(crmField, 'neutral');
+                setFieldState(ufField, 'neutral');
+                crmField._touched = false;
+                ufField._touched = false;
+                categoryNote.textContent = 'Para estudantes/profissionais da saúde, o sorteio usa os dados pessoais sem exigir CRM ou UF.';
                 return;
             }
 
@@ -167,11 +305,27 @@
         syncParticipantType();
         typeField.addEventListener('change', syncParticipantType);
 
+        /* ── Validação no submit ── */
         Array.from(forms).forEach((form) => {
             form.addEventListener('submit', (event) => {
-                if (!form.checkValidity()) {
+                /* Marca todos os campos visíveis como touched */
+                Object.keys(validationRules).forEach(id => {
+                    const field = document.getElementById(id);
+                    if (!field) return;
+                    const wrapper = field.closest('.d-none');
+                    if (wrapper) return; /* ignora campos escondidos */
+                    field._touched = true;
+                    validateField(field);
+                });
+
+                /* Verifica se há algum campo inválido */
+                const hasInvalid = form.querySelector('.is-invalid:not(.d-none)');
+                if (hasInvalid || !form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
+                    /* Foca no primeiro campo inválido */
+                    const first = form.querySelector('.is-invalid');
+                    if (first) first.focus();
                 }
                 form.classList.add('was-validated');
             }, false);

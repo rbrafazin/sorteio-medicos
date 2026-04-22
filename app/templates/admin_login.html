@@ -18,18 +18,22 @@
 
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label fw-semibold" for="{{ form.username.id }}">{{ form.username.label.text }}</label>
-                            {{ form.username(class="form-control form-control-lg" + (" is-invalid" if form.username.errors else "")) }}
+                            <label class="form-label fw-semibold" for="{{ form.username.id }}">{{
+                                form.username.label.text }}<span class="required-mark">*</span></label>
+                            {{ form.username(class="form-control form-control-lg" + (" is-invalid" if
+                            form.username.errors else "")) }}
                             {% for error in form.username.errors %}
-                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label fw-semibold" for="{{ form.password.id }}">{{ form.password.label.text }}</label>
-                            {{ form.password(class="form-control form-control-lg" + (" is-invalid" if form.password.errors else "")) }}
+                            <label class="form-label fw-semibold" for="{{ form.password.id }}">{{
+                                form.password.label.text }}<span class="required-mark">*</span></label>
+                            {{ form.password(class="form-control form-control-lg" + (" is-invalid" if
+                            form.password.errors else "")) }}
                             {% for error in form.password.errors %}
-                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -48,11 +52,85 @@
 <script>
     (() => {
         const forms = document.querySelectorAll('.needs-validation');
+
+        const validationRules = {
+            '{{ form.username.id }}': {
+                validate(v) { return v.trim().length >= 3 && v.trim().length <= 80; },
+                message: 'O usuário deve ter entre 3 e 80 caracteres.'
+            },
+            '{{ form.password.id }}': {
+                validate(v) { return v.length >= 6 && v.length <= 128; },
+                message: 'A senha deve ter entre 6 e 128 caracteres.'
+            }
+        };
+
+        function setFieldState(field, state) {
+            field.classList.remove('is-valid', 'is-invalid');
+            const existingFeedback = field.parentElement.querySelector('.js-feedback');
+            if (existingFeedback) existingFeedback.remove();
+
+            if (state === 'valid') {
+                field.classList.add('is-valid');
+            } else if (state === 'invalid') {
+                field.classList.add('is-invalid');
+                const rule = validationRules[field.id];
+                if (rule) {
+                    const fb = document.createElement('div');
+                    fb.className = 'invalid-feedback d-block js-feedback';
+                    fb.textContent = rule.message;
+                    field.parentElement.appendChild(fb);
+                }
+            }
+        }
+
+        function validateField(field) {
+            const rule = validationRules[field.id];
+            if (!rule) return;
+            const value = field.value || '';
+            if (!value.trim()) {
+                if (field._touched) {
+                    setFieldState(field, 'invalid');
+                } else {
+                    setFieldState(field, 'neutral');
+                }
+                return;
+            }
+            if (rule.validate(value)) {
+                setFieldState(field, 'valid');
+            } else {
+                setFieldState(field, 'invalid');
+            }
+        }
+
+        Object.keys(validationRules).forEach(id => {
+            const field = document.getElementById(id);
+            if (!field) return;
+
+            field.addEventListener('blur', () => {
+                field._touched = true;
+                validateField(field);
+            });
+
+            field.addEventListener('input', () => {
+                if (field._touched) validateField(field);
+            });
+        });
+
         Array.from(forms).forEach((form) => {
             form.addEventListener('submit', (event) => {
-                if (!form.checkValidity()) {
+                Object.keys(validationRules).forEach(id => {
+                    const field = document.getElementById(id);
+                    if (!field) return;
+                    field._touched = true;
+                    validateField(field);
+                });
+
+                const hasInvalid = form.querySelector('.is-invalid');
+                if (hasInvalid || !form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
+                    const first = form.querySelector('.is-invalid');
+                    if (first) first.focus();
                 }
                 form.classList.add('was-validated');
             }, false);

@@ -33,7 +33,7 @@ class DoctorRegistration(db.Model):
         if self.tipo_participante == "medico":
             return "Medico"
         if self.tipo_participante == "estudante":
-            return "Estudante"
+            return "Estudante/Profissional da Saúde"
         return "Nao informado"
 
     @property

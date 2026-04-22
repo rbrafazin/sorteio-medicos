@@ -235,7 +235,7 @@ def draw_winner():
         if tipo_participante == "medico":
             message = "Nenhum medico cadastrado para realizar o sorteio."
         elif tipo_participante == "estudante":
-            message = "Nenhum estudante cadastrado para realizar o sorteio."
+            message = "Nenhum estudante/profissional da saúde cadastrado para realizar o sorteio."
         else:
             message = "Nenhum cadastro encontrado para realizar o sorteio."
         return jsonify({"message": message}), 404

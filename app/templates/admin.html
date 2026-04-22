@@ -9,11 +9,14 @@
             <div>
                 <p class="section-label mb-2">Area protegida</p>
                 <h1 class="h2 fw-bold mb-1">Painel de sorteio</h1>
-                <p class="text-secondary mb-0">Acompanhe os inscritos e realize sorteios separados para médicos e estudantes.</p>
+                <p class="text-secondary mb-0">Acompanhe os inscritos e realize sorteios separados para médicos e
+                    estudantes/profissionais da saúde.</p>
             </div>
             <div class="admin-toolbar-actions">
-                <button class="btn btn-warning btn-lg draw-button" data-type="medico" data-label="Médicos">Sortear Médicos</button>
-                <button class="btn btn-shell btn-lg draw-button" data-type="estudante" data-label="Estudantes">Sortear Estudantes</button>
+                <button class="btn btn-warning btn-lg draw-button" data-type="medico" data-label="Médicos">Sortear
+                    Médicos</button>
+                <button class="btn btn-shell btn-lg draw-button" data-type="estudante" data-label="Estudantes/Profissionais da Saúde">Sortear
+                    Estudantes/Profissionais da Saúde</button>
             </div>
         </div>
     </div>
@@ -25,7 +28,8 @@
                     <div class="col-lg-5">
                         <p class="section-label mb-2">Ultimo resultado</p>
                         <h2 class="h4 mb-1">Aguardando sorteio</h2>
-                        <p class="text-secondary mb-0" id="winnerSummary">Clique em "Sortear Agora" para selecionar um participante.</p>
+                        <p class="text-secondary mb-0" id="winnerSummary">Clique em "Sortear Agora" para selecionar um
+                            participante.</p>
                     </div>
                     <div class="col-lg-7">
                         <div class="row g-3">
@@ -43,7 +47,7 @@
                             </div>
                             <div class="col-4">
                                 <div class="metric-card">
-                                    <span>Estudantes</span>
+                                    <span>Estudantes/Profissionais da Saúde</span>
                                     <strong>{{ student_count }}</strong>
                                 </div>
                             </div>
@@ -79,24 +83,24 @@
                         </thead>
                         <tbody>
                             {% if registrations %}
-                                {% for registration in registrations %}
-                                    <tr>
-                                        <td>{{ registration.participant_type_label }}</td>
-                                        <td class="fw-semibold">{{ registration.nome }}</td>
-                                        <td>{{ registration.display_crm }}</td>
-                                        <td>{{ registration.email or "-" }}</td>
-                                        <td>{{ registration.formatted_cpf }}</td>
-                                        <td>{{ registration.whatsapp }}</td>
-                                        <td><span class="table-code">{{ registration.codigo_sorteio }}</span></td>
-                                        <td>{{ registration.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
-                                    </tr>
-                                {% endfor %}
+                            {% for registration in registrations %}
+                            <tr>
+                                <td>{{ registration.participant_type_label }}</td>
+                                <td class="fw-semibold">{{ registration.nome }}</td>
+                                <td>{{ registration.display_crm }}</td>
+                                <td>{{ registration.email or "-" }}</td>
+                                <td>{{ registration.formatted_cpf }}</td>
+                                <td>{{ registration.whatsapp }}</td>
+                                <td><span class="table-code">{{ registration.codigo_sorteio }}</span></td>
+                                <td>{{ registration.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
+                            </tr>
+                            {% endfor %}
                             {% else %}
-                                <tr>
-                                    <td colspan="8" class="text-center py-5 text-secondary">
-                                        Nenhum participante cadastrado ate o momento.
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="8" class="text-center py-5 text-secondary">
+                                    Nenhum participante cadastrado ate o momento.
+                                </td>
+                            </tr>
                             {% endif %}
                         </tbody>
                     </table>

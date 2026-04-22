@@ -12,8 +12,21 @@ csrf = CSRFProtect()
 def create_app() -> Flask:
     app = Flask(__name__)
 
-    admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
+    secret_key = os.getenv("SECRET_KEY")
+    if not secret_key:
+        raise ValueError("ERRO FATAL: Variável SECRET_KEY ausente. Defina uma chave secreta forte.")
+
+    admin_username = os.getenv("ADMIN_USERNAME")
+    if not admin_username:
+        raise ValueError("ERRO FATAL: Variável ADMIN_USERNAME ausente. Defina o nome do usuário administrativo.")
+
+    admin_password = os.getenv("ADMIN_PASSWORD")
     admin_password_hash = os.getenv("ADMIN_PASSWORD_HASH")
+    if not admin_password and not admin_password_hash:
+        raise ValueError(
+            "ERRO FATAL: Nenhuma credencial de senha configurada. "
+            "Defina ADMIN_PASSWORD ou ADMIN_PASSWORD_HASH."
+        )
 
     database_url = os.getenv("DATABASE_URL")
     if not database_url:
@@ -23,10 +36,10 @@ def create_app() -> Flask:
         database_url = database_url.replace("postgres://", "postgresql://", 1)
 
     app.config.update(
-        SECRET_KEY=os.getenv("SECRET_KEY", "troque-esta-chave-em-producao"),
+        SECRET_KEY=secret_key,
         SQLALCHEMY_DATABASE_URI=database_url,
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        ADMIN_USERNAME=os.getenv("ADMIN_USERNAME", "admin"),
+        ADMIN_USERNAME=admin_username,
         ADMIN_PASSWORD=admin_password,
         ADMIN_PASSWORD_HASH=admin_password_hash,
         PUBLIC_BASE_URL=os.getenv("PUBLIC_BASE_URL", "").rstrip("/"),
