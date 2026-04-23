@@ -167,6 +167,11 @@ body::before {
     padding-bottom: 0.9rem;
 }
 
+.category-select {
+    font-size: 0.95rem;
+    padding-right: 2.75rem;
+}
+
 .crm-field {
     flex: 0 0 28%;
     max-width: 28%;
@@ -275,8 +280,18 @@ body::before {
 
 .admin-toolbar-actions {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 0.75rem;
+    width: min(100%, 34rem);
+}
+
+.admin-toolbar-actions .btn {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: normal;
 }
 
 .metric-card {
@@ -300,6 +315,7 @@ body::before {
     display: block;
     font-size: 1.35rem;
     line-height: 1.1;
+    overflow-wrap: anywhere;
 }
 
 .metric-card-highlight {
@@ -362,6 +378,13 @@ body::before {
     background: rgba(250, 249, 245, 0.96);
 }
 
+.winner-modal-card p,
+.winner-modal-card h4,
+.winner-modal-card span,
+.table-code {
+    overflow-wrap: anywhere;
+}
+
 @media (max-width: 991.98px) {
     .page-title {
         max-width: none;
@@ -391,6 +414,35 @@ body::before {
     .simple-table th,
     .simple-table td {
         padding: 0.9rem 1rem;
+    }
+
+    .admin-toolbar-actions {
+        flex-direction: column;
+    }
+
+    .admin-toolbar-actions .btn {
+        width: 100%;
+    }
+
+    .metric-card {
+        padding: 0.9rem;
+    }
+
+    .metric-card span {
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+    }
+
+    .metric-card strong {
+        font-size: 1.18rem;
+    }
+
+    .winner-modal-card {
+        padding: 1rem;
+    }
+
+    .winner-modal-card .display-6 {
+        font-size: 1.9rem;
     }
 }
 
@@ -426,6 +478,10 @@ body::before {
         font-size: 16px;
     }
 
+    .category-select {
+        font-size: 0.9rem;
+    }
+
     .btn {
         min-height: 52px;
         font-size: 1rem;
@@ -433,6 +489,11 @@ body::before {
 
     .soft-note {
         padding: 0.9rem 1rem;
+    }
+
+    .selection-hint,
+    .soft-note {
+        font-size: 0.95rem;
     }
 }
 

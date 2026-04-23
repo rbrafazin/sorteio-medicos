@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask
+from flask import Flask, flash, jsonify, redirect, request, session, url_for
+from flask_wtf.csrf import CSRFError
 from flask_wtf.csrf import CSRFProtect
 
 from .models import db
@@ -51,6 +52,31 @@ def create_app() -> Flask:
     from .routes import main_bp
 
     app.register_blueprint(main_bp)
+
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(error: CSRFError):
+        is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+        admin_session_active = bool(session.get("admin_authenticated"))
+
+        if is_ajax:
+            if not admin_session_active:
+                return jsonify({"message": "Sua sessao expirou. Faca login novamente."}), 401
+            return (
+                jsonify(
+                    {
+                        "message": (
+                            "Nao foi possivel validar a requisicao. "
+                            "Atualize a pagina e tente novamente."
+                        )
+                    }
+                ),
+                400,
+            )
+
+        flash("Sua sessao expirou ou o formulario ficou invalido. Tente novamente.", "warning")
+        if request.path.startswith("/admin") or request.path.startswith("/sortear"):
+            return redirect(url_for("main.admin_login"))
+        return redirect(url_for("main.register"))
 
     with app.app_context():
         db.create_all()

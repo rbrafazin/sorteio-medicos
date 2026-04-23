@@ -15,7 +15,7 @@
             <div class="admin-toolbar-actions">
                 <button class="btn btn-warning btn-lg draw-button" data-type="medico" data-label="Médicos">Sortear
                     Médicos</button>
-                <button class="btn btn-shell btn-lg draw-button" data-type="estudante" data-label="Estudantes/Profissionais da Saúde">Sortear
+                <button class="btn btn-warning btn-lg draw-button" data-type="estudante" data-label="Estudantes/Profissionais da Saúde">Sortear
                     Estudantes/Profissionais da Saúde</button>
             </div>
         </div>
@@ -33,19 +33,19 @@
                     </div>
                     <div class="col-lg-7">
                         <div class="row g-3">
-                            <div class="col-4">
+                            <div class="col-6 col-md-4">
                                 <div class="metric-card">
                                     <span>Total</span>
                                     <strong>{{ registrations|length }}</strong>
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="col-6 col-md-4">
                                 <div class="metric-card">
                                     <span>Médicos</span>
                                     <strong>{{ doctor_count }}</strong>
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="col-12 col-md-4">
                                 <div class="metric-card">
                                     <span>Estudantes/Profissionais da Saúde</span>
                                     <strong>{{ student_count }}</strong>
@@ -178,6 +178,11 @@
                     if (!response.ok) {
                         winnerChip.textContent = 'Sem vencedor';
                         winnerSummary.textContent = payload.message || 'Nao foi possivel realizar o sorteio.';
+                        if (response.status === 401) {
+                            window.setTimeout(() => {
+                                window.location.href = '{{ url_for("main.admin_login") }}';
+                            }, 1200);
+                        }
                         return;
                     }
 
