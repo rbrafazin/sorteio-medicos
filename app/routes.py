@@ -48,12 +48,12 @@ def get_integrity_error_message(error: IntegrityError) -> str:
     error_text = str(getattr(error, "orig", error)).lower()
 
     duplicate_messages = [
-        ("cpf", "Este CPF ja esta cadastrado no sorteio."),
-        ("crm", "Este CRM ja esta cadastrado no sorteio."),
-        ("email", "Este email ja esta cadastrado no sorteio."),
+        ("cpf", "Este CPF já está cadastrado no sorteio."),
+        ("crm", "Este CRM já está cadastrado no sorteio."),
+        ("email", "Este e-mail já está cadastrado no sorteio."),
         (
             "codigo_sorteio",
-            "Nao foi possivel gerar um codigo unico agora. Tente novamente.",
+            "Não foi possível gerar um código único agora. Tente novamente.",
         ),
     ]
 
@@ -68,7 +68,7 @@ def get_integrity_error_message(error: IntegrityError) -> str:
         for field_name, message in duplicate_messages:
             if field_name in error_text:
                 return message
-        return "Ja existe um cadastro com um dado unico repetido."
+        return "Já existe um cadastro com um dado único repetido."
 
     null_column_match = re.search(r'null value in column "([^"]+)"', error_text)
     if null_column_match:
@@ -80,15 +80,15 @@ def get_integrity_error_message(error: IntegrityError) -> str:
             )
         if column_name == "email":
             return (
-                "O banco atual esta exigindo email de um jeito diferente do esperado. "
+                "O banco atual está exigindo e-mail de um jeito diferente do esperado. "
                 "Verifique a estrutura da tabela."
             )
         return (
-            f"O banco esta exigindo o campo {column_name}. "
-            "Verifique se a estrutura da tabela esta atualizada."
+            f"O banco está exigindo o campo {column_name}. "
+            "Verifique se a estrutura da tabela está atualizada."
         )
 
-    return "Nao foi possivel salvar o cadastro. Verifique os dados informados."
+    return "Não foi possível salvar o cadastro. Verifique os dados informados."
 
 
 def get_public_form_url() -> str:
@@ -107,10 +107,10 @@ def admin_login_required(view_func):
         if not session.get("admin_authenticated"):
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify(
-                    {"message": "Sua sessao expirou. Faca login novamente."}
+                    {"message": "Sua sessão expirou. Faça login novamente."}
                 ), 401
 
-            flash("Faca login para acessar o painel administrativo.", "warning")
+            flash("Faça login para acessar o painel administrativo.", "warning")
             return redirect(url_for("main.admin_login", next=request.path))
 
         return view_func(*args, **kwargs)
@@ -153,7 +153,7 @@ def admin_login():
                 return redirect(next_url)
             return redirect(url_for("main.admin_panel"))
 
-        flash("Usuario ou senha invalidos.", "danger")
+        flash("Usuário ou senha inválidos.", "danger")
 
     return render_template("admin_login.html", form=form)
 
@@ -183,11 +183,11 @@ def register():
             tipo_participante == "medico"
             and DoctorRegistration.query.filter_by(crm=crm).first()
         ):
-            flash("Este CRM ja esta cadastrado no sorteio.", "danger")
+            flash("Este CRM já está cadastrado no sorteio.", "danger")
             return render_template("index.html", form=form)
 
         if DoctorRegistration.query.filter_by(cpf=cpf).first():
-            flash("Este CPF ja esta cadastrado no sorteio.", "danger")
+            flash("Este CPF já está cadastrado no sorteio.", "danger")
             return render_template("index.html", form=form)
 
         raffle_code = generate_raffle_code(tipo_participante)
@@ -209,7 +209,7 @@ def register():
         try:
             db.session.commit()
             flash(
-                f"Cadastro realizado com sucesso. Seu codigo do sorteio e {raffle_code}.",
+                f"Cadastro realizado com sucesso. Seu código do sorteio é {raffle_code}.",
                 "success",
             )
             return redirect(url_for("main.register"))
@@ -289,7 +289,7 @@ def export_registrations_csv():
             "Email",
             "CPF",
             "WhatsApp",
-            "Codigo do Sorteio",
+            "Código do Sorteio",
             "Cadastrado em",
             "Status do Sorteio",
             "Sorteado em",
@@ -323,6 +323,40 @@ def export_registrations_csv():
     )
 
 
+@main_bp.route("/admin/resetar-sorteios", methods=["POST"])
+@admin_login_required
+def reset_draws():
+    tipo_participante = request.form.get("tipo", "").strip().lower()
+    participant_labels = {
+        "medico": "médicos",
+        "estudante": "estudantes/profissionais da saúde",
+    }
+
+    if tipo_participante not in participant_labels:
+        flash("Categoria inválida para resetar sorteios.", "danger")
+        return redirect(url_for("main.admin_panel"))
+
+    reset_count = (
+        DoctorRegistration.query.filter_by(tipo_participante=tipo_participante)
+        .filter(DoctorRegistration.sorteado_em.is_not(None))
+        .update({DoctorRegistration.sorteado_em: None}, synchronize_session=False)
+    )
+    db.session.commit()
+
+    if reset_count:
+        flash(
+            f"{reset_count} {participant_labels[tipo_participante]} foram liberados novamente para sorteio.",
+            "success",
+        )
+    else:
+        flash(
+            f"Nenhum registro de {participant_labels[tipo_participante]} estava marcado como sorteado.",
+            "warning",
+        )
+
+    return redirect(url_for("main.admin_panel"))
+
+
 @main_bp.route("/sortear", methods=["POST"])
 @admin_login_required
 def draw_winner():
@@ -339,13 +373,16 @@ def draw_winner():
     if total == 0:
         if tipo_participante == "medico":
             message = (
-                "Nenhum medico disponivel para sorteio. "
-                "Todos ja foram sorteados ou nao ha cadastros."
+                "Nenhum médico disponível para sorteio. "
+                "Todos já foram sorteados ou não há cadastros."
             )
         elif tipo_participante == "estudante":
-            message = "Nenhum estudante/profissional da saúde cadastrado para realizar o sorteio."
+            message = (
+                "Nenhum estudante/profissional da saúde disponível para sorteio. "
+                "Todos já foram sorteados ou não há cadastros."
+            )
         else:
-            message = "Nenhum cadastro disponivel para realizar o sorteio."
+            message = "Nenhum cadastro disponível para realizar o sorteio."
         return jsonify({"message": message}), 404
 
     winner = eligible_query.order_by(func.random()).first()

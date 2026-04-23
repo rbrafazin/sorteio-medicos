@@ -86,14 +86,14 @@ def create_app() -> Flask:
         if is_ajax:
             if not admin_session_active:
                 return jsonify(
-                    {"message": "Sua sessao expirou. Faca login novamente."}
+                    {"message": "Sua sessão expirou. Faça login novamente."}
                 ), 401
             return (
                 jsonify(
                     {
                         "message": (
-                            "Nao foi possivel validar a requisicao. "
-                            "Atualize a pagina e tente novamente."
+                            "Não foi possível validar a requisição. "
+                            "Atualize a página e tente novamente."
                         )
                     }
                 ),
@@ -101,7 +101,7 @@ def create_app() -> Flask:
             )
 
         flash(
-            "Sua sessao expirou ou o formulario ficou invalido. Tente novamente.",
+            "Sua sessão expirou ou o formulário ficou inválido. Tente novamente.",
             "warning",
         )
         if request.path.startswith("/admin") or request.path.startswith("/sortear"):

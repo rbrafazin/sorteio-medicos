@@ -60,10 +60,10 @@ class RegistrationForm(FlaskForm):
         "CRM",
         validators=[
             Optional(),
-            Length(min=4, max=10, message="O CRM deve ter entre 4 e 10 digitos."),
+            Length(min=4, max=10, message="O CRM deve ter entre 4 e 10 dígitos."),
             Regexp(
                 r"^\d+$",
-                message="Use apenas numeros no CRM.",
+                message="Use apenas números no CRM.",
             ),
         ],
         render_kw={
@@ -77,13 +77,13 @@ class RegistrationForm(FlaskForm):
         choices=UF_CHOICES,
     )
     email = StringField(
-        "Email",
+        "E-mail",
         validators=[
-            DataRequired(message="Informe o email."),
-            Length(max=255, message="O email deve ter no maximo 255 caracteres."),
+            DataRequired(message="Informe o e-mail."),
+            Length(max=255, message="O e-mail deve ter no máximo 255 caracteres."),
             Regexp(
                 r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-                message="Informe um email valido.",
+                message="Informe um e-mail válido.",
             ),
         ],
         render_kw={
@@ -99,7 +99,7 @@ class RegistrationForm(FlaskForm):
             DataRequired(message="Informe o CPF."),
             Regexp(
                 r"^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$",
-                message="Informe um CPF valido com 11 digitos.",
+                message="Informe um CPF válido com 11 dígitos.",
             ),
         ],
         render_kw={
@@ -118,7 +118,7 @@ class RegistrationForm(FlaskForm):
             ),
             Regexp(
                 r"^[0-9()\-\+\s]+$",
-                message="Use apenas numeros, espacos e os caracteres () - +",
+                message="Use apenas números, espaços e os caracteres () - +",
             ),
         ],
         render_kw={
@@ -135,7 +135,7 @@ class RegistrationForm(FlaskForm):
 
         if self.tipo_participante.data == "medico":
             if not (self.crm.data or "").strip():
-                self.crm.errors.append("Informe o numero do CRM.")
+                self.crm.errors.append("Informe o número do CRM.")
                 is_valid = False
 
             if not (self.uf.data or "").strip():
@@ -147,11 +147,11 @@ class RegistrationForm(FlaskForm):
 
 class AdminLoginForm(FlaskForm):
     username = StringField(
-        "Usuario",
+        "Usuário",
         validators=[
-            DataRequired(message="Informe o usuario administrador."),
+            DataRequired(message="Informe o usuário administrador."),
             Length(
-                min=3, max=80, message="O usuario deve ter entre 3 e 80 caracteres."
+                min=3, max=80, message="O usuário deve ter entre 3 e 80 caracteres."
             ),
         ],
         render_kw={"placeholder": "admin"},

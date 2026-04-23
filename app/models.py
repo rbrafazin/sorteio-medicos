@@ -32,10 +32,10 @@ class DoctorRegistration(db.Model):
     @property
     def participant_type_label(self) -> str:
         if self.tipo_participante == "medico":
-            return "Medico"
+            return "Médico"
         if self.tipo_participante == "estudante":
             return "Estudante/Profissional da Saúde"
-        return "Nao informado"
+        return "Não informado"
 
     @property
     def display_crm(self) -> str:
@@ -47,7 +47,7 @@ class DoctorRegistration(db.Model):
 
     @property
     def draw_status_label(self) -> str:
-        return "Ja sorteado" if self.already_drawn else "Disponivel"
+        return "Já sorteado" if self.already_drawn else "Disponível"
 
     @property
     def formatted_sorteado_em(self) -> str:

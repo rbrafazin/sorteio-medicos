@@ -309,18 +309,31 @@ body::before {
 
 .admin-toolbar-actions {
     display: flex;
-    align-items: stretch;
     gap: 0.75rem;
     width: min(100%, 34rem);
 }
 
-.admin-toolbar-actions .btn {
+.admin-toolbar-action-column {
+    display: flex;
     flex: 1 1 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+}
+
+.admin-toolbar-action-column .draw-button {
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     white-space: normal;
+    width: 100%;
+    min-height: 118px;
+}
+
+.admin-toolbar-action-column form,
+.admin-toolbar-action-column .btn {
+    width: 100%;
 }
 
 .metric-card {
@@ -350,6 +363,59 @@ body::before {
 .metric-card-highlight {
     border-color: rgba(31, 79, 70, 0.16);
     background: rgba(31, 79, 70, 0.06);
+}
+
+.winner-showcase {
+    padding: 1.2rem;
+    border: 1px solid rgba(31, 87, 195, 0.14);
+    border-radius: 1.25rem;
+    background: rgba(255, 255, 255, 0.82);
+}
+
+.winner-showcase-status {
+    color: #1f57c3;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.winner-showcase-name {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 0.96;
+    letter-spacing: -0.05em;
+    margin: 0;
+}
+
+.winner-showcase-meta,
+.winner-modal-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.winner-showcase-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.95rem;
+    border-radius: 999px;
+    background: rgba(28, 36, 48, 0.06);
+    border: 1px solid rgba(28, 36, 48, 0.1);
+    color: var(--text);
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.winner-showcase-pill-code {
+    background: #1f57c3;
+    border-color: #1f57c3;
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(31, 87, 195, 0.18);
+}
+
+.winner-metrics {
+    padding-top: 2rem;
 }
 
 .simple-table thead th {
@@ -407,6 +473,55 @@ body::before {
     background: rgba(250, 249, 245, 0.96);
 }
 
+.winner-modal-hero {
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid rgba(22, 28, 45, 0.08);
+}
+
+.winner-suspense-title {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.winner-suspense-reel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+}
+
+.winner-suspense-reel span {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #1f57c3 0%, #7fa9ff 100%);
+    box-shadow: 0 12px 22px rgba(31, 87, 195, 0.22);
+    animation: suspense-bounce 0.9s infinite ease-in-out;
+}
+
+.winner-suspense-reel span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.winner-suspense-reel span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes suspense-bounce {
+    0%,
+    80%,
+    100% {
+        transform: translateY(0) scale(0.9);
+        opacity: 0.55;
+    }
+
+    40% {
+        transform: translateY(-8px) scale(1.08);
+        opacity: 1;
+    }
+}
+
 .winner-modal-card p,
 .winner-modal-card h4,
 .winner-modal-card span,
@@ -449,7 +564,8 @@ body::before {
         flex-direction: column;
     }
 
-    .admin-toolbar-actions .btn {
+    .admin-toolbar-action-column,
+    .admin-toolbar-action-column .btn {
         width: 100%;
     }
 
@@ -466,12 +582,20 @@ body::before {
         font-size: 1.18rem;
     }
 
+    .winner-showcase {
+        padding: 1rem;
+    }
+
+    .winner-showcase-name {
+        font-size: 1.8rem;
+    }
+
     .winner-modal-card {
         padding: 1rem;
     }
 
-    .winner-modal-card .display-6 {
-        font-size: 1.9rem;
+    .winner-modal-card .display-5 {
+        font-size: 2rem;
     }
 
 }

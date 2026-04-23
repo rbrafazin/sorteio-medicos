@@ -7,16 +7,30 @@
     <div class="col-12">
         <div class="admin-toolbar">
             <div>
-                <p class="section-label mb-2">Area protegida</p>
+                <p class="section-label mb-2">Área protegida</p>
                 <h1 class="h2 fw-bold mb-1">Painel de sorteio</h1>
                 <p class="text-secondary mb-0">Acompanhe os inscritos e realize sorteios separados para médicos e
                     estudantes/profissionais da saúde.</p>
             </div>
             <div class="admin-toolbar-actions">
-                <button class="btn btn-warning btn-lg draw-button" data-type="medico" data-label="Médicos">Sortear
-                    Médicos</button>
-                <button class="btn btn-warning btn-lg draw-button" data-type="estudante" data-label="Estudantes/Profissionais da Saúde">Sortear
-                    Estudantes/Profissionais da Saúde</button>
+                <div class="admin-toolbar-action-column">
+                    <button class="btn btn-warning btn-lg draw-button" data-type="medico" data-label="Médicos">Sortear
+                        Médicos</button>
+                    <form method="post" action="{{ url_for('main.reset_draws') }}" onsubmit="return confirm('Isso vai liberar novamente todos os médicos já sorteados. Deseja continuar?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="tipo" value="medico">
+                        <button type="submit" class="btn btn-shell btn-sm">Resetar Médicos</button>
+                    </form>
+                </div>
+                <div class="admin-toolbar-action-column">
+                    <button class="btn btn-warning btn-lg draw-button" data-type="estudante" data-label="Estudantes/Profissionais da Saúde">Sortear
+                        Estudantes/Profissionais da Saúde</button>
+                    <form method="post" action="{{ url_for('main.reset_draws') }}" onsubmit="return confirm('Isso vai liberar novamente todos os estudantes/profissionais da saúde já sorteados. Deseja continuar?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="tipo" value="estudante">
+                        <button type="submit" class="btn btn-shell btn-sm">Resetar Estudantes</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -26,12 +40,19 @@
             <div class="card-body p-4">
                 <div class="row g-3 align-items-start">
                     <div class="col-lg-5">
-                        <p class="section-label mb-2">Ultimo resultado</p>
-                        <h2 class="h4 mb-1">Aguardando sorteio</h2>
-                        <p class="text-secondary mb-0" id="winnerSummary">Clique em "Sortear Agora" para selecionar um
-                            participante.</p>
+                        <p class="section-label mb-2">Último resultado</p>
+                        <div class="winner-showcase">
+                            <p class="winner-showcase-status mb-2" id="winnerStatus">Aguardando sorteio</p>
+                            <h2 class="winner-showcase-name mb-3" id="winnerName">Sem vencedor</h2>
+                            <div class="winner-showcase-meta mb-3">
+                                <span class="winner-showcase-pill" id="winnerType">Categoria pendente</span>
+                                <span class="winner-showcase-pill winner-showcase-pill-code" id="winnerCode">Código pendente</span>
+                            </div>
+                            <p class="text-secondary mb-0" id="winnerSummary">Clique em "Sortear Agora" para selecionar um
+                                participante.</p>
+                        </div>
                     </div>
-                    <div class="col-lg-7">
+                    <div class="col-lg-7 winner-metrics">
                         <div class="row g-3">
                             <div class="col-6 col-md-4">
                                 <div class="metric-card">
@@ -47,14 +68,14 @@
                             </div>
                             <div class="col-12 col-md-4">
                                 <div class="metric-card">
-                                    <span>Ja Sorteados</span>
+                                    <span>Já Sorteados</span>
                                     <strong>{{ drawn_count }}</strong>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="metric-card metric-card-highlight">
-                                    <span>Vencedor</span>
-                                    <strong id="winnerChip">Sem vencedor</strong>
+                                    <span>Código Revelado</span>
+                                    <strong id="winnerChip">Aguardando</strong>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +89,7 @@
         <div class="card border-0 surface-card">
             <div class="card-header bg-transparent border-0 px-4 pt-4 pb-0 d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div>
-                    <p class="section-label mb-2">Contingencia</p>
+                    <p class="section-label mb-2">Contingência</p>
                     <p class="text-secondary mb-0">Baixe a lista atualizada dos inscritos em CSV para backup.</p>
                 </div>
                 <a class="btn btn-shell" href="{{ url_for('main.export_registrations_csv') }}">Exportar CSV</a>
@@ -84,7 +105,7 @@
                                 <th>Email</th>
                                 <th>CPF</th>
                                 <th>WhatsApp</th>
-                                <th>Codigo do Sorteio</th>
+                                <th>Código do Sorteio</th>
                                 <th>Status</th>
                                 <th>Cadastrado em</th>
                                 <th>Sorteado em</th>
@@ -109,7 +130,7 @@
                             {% else %}
                             <tr>
                                 <td colspan="10" class="text-center py-5 text-secondary">
-                                    Nenhum participante cadastrado ate o momento.
+                                    Nenhum participante cadastrado até o momento.
                                 </td>
                             </tr>
                             {% endif %}
@@ -130,15 +151,31 @@
             </div>
             <div class="modal-body pt-3">
                 <div class="winner-modal-card">
-                    <p class="section-label mb-2">Participante selecionado</p>
-                    <h4 class="display-6 fw-bold mb-3" id="modalWinnerName">-</h4>
-                    <div>
-                        <p class="mb-2"><strong>Categoria:</strong> <span id="modalWinnerType">-</span></p>
-                        <p class="mb-2"><strong>CRM:</strong> <span id="modalWinnerCrm">-</span></p>
-                        <p class="mb-2"><strong>Email:</strong> <span id="modalWinnerEmail">-</span></p>
-                        <p class="mb-2"><strong>CPF:</strong> <span id="modalWinnerCpf">-</span></p>
-                        <p class="mb-2"><strong>WhatsApp:</strong> <span id="modalWinnerWhatsapp">-</span></p>
-                        <p class="mb-0"><strong>Codigo:</strong> <span id="modalWinnerCode">-</span></p>
+                    <div id="winnerSuspenseState">
+                        <p class="section-label mb-2">Sorteio em andamento</p>
+                        <h4 class="winner-suspense-title mb-3" id="winnerSuspenseTitle">Preparando sorteio...</h4>
+                        <div class="winner-suspense-reel mb-3" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <p class="text-secondary mb-0">Aguarde alguns segundos para revelar o vencedor.</p>
+                    </div>
+                    <div class="d-none" id="winnerResultState">
+                        <div class="winner-modal-hero mb-4">
+                            <p class="section-label mb-2">Participante selecionado</p>
+                            <h4 class="display-5 fw-bold mb-3" id="modalWinnerName">-</h4>
+                            <div class="winner-modal-meta">
+                                <span class="winner-showcase-pill" id="modalWinnerType">-</span>
+                                <span class="winner-showcase-pill winner-showcase-pill-code" id="modalWinnerCode">-</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="mb-2"><strong>CRM:</strong> <span id="modalWinnerCrm">-</span></p>
+                            <p class="mb-2"><strong>Email:</strong> <span id="modalWinnerEmail">-</span></p>
+                            <p class="mb-2"><strong>CPF:</strong> <span id="modalWinnerCpf">-</span></p>
+                            <p class="mb-0"><strong>WhatsApp:</strong> <span id="modalWinnerWhatsapp">-</span></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -152,9 +189,55 @@
     (() => {
         const drawButtons = document.querySelectorAll('.draw-button');
         const winnerChip = document.getElementById('winnerChip');
+        const winnerStatus = document.getElementById('winnerStatus');
+        const winnerName = document.getElementById('winnerName');
+        const winnerType = document.getElementById('winnerType');
+        const winnerCode = document.getElementById('winnerCode');
         const winnerSummary = document.getElementById('winnerSummary');
         const winnerModalElement = document.getElementById('winnerModal');
+        const winnerSuspenseState = document.getElementById('winnerSuspenseState');
+        const winnerResultState = document.getElementById('winnerResultState');
+        const winnerSuspenseTitle = document.getElementById('winnerSuspenseTitle');
         const winnerModal = new bootstrap.Modal(winnerModalElement);
+        const suspenseDurationMs = 2400;
+
+        const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+        const snapshotWinnerState = () => ({
+            status: winnerStatus.textContent,
+            name: winnerName.textContent,
+            type: winnerType.textContent,
+            code: winnerCode.textContent,
+            chip: winnerChip.textContent,
+            summary: winnerSummary.textContent,
+        });
+
+        const restoreWinnerState = (snapshot) => {
+            winnerStatus.textContent = snapshot.status;
+            winnerName.textContent = snapshot.name;
+            winnerType.textContent = snapshot.type;
+            winnerCode.textContent = snapshot.code;
+            winnerChip.textContent = snapshot.chip;
+            winnerSummary.textContent = snapshot.summary;
+        };
+
+        const setButtonsAvailability = (disabled) => {
+            drawButtons.forEach((button) => {
+                button.disabled = disabled;
+            });
+        };
+
+        const setSuspenseState = (drawLabel) => {
+            winnerStatus.textContent = 'Sorteio em andamento';
+            winnerName.textContent = 'Revelação em instantes';
+            winnerType.textContent = drawLabel;
+            winnerCode.textContent = 'Sorteando...';
+            winnerChip.textContent = 'Sorteando...';
+            winnerSummary.textContent = `Estamos sorteando ${drawLabel.toLowerCase()}. Aguarde a revelação do vencedor.`;
+            winnerSuspenseTitle.textContent = `Sorteando ${drawLabel}...`;
+            winnerResultState.classList.add('d-none');
+            winnerSuspenseState.classList.remove('d-none');
+        };
 
         const setWinnerContent = (winner) => {
             document.getElementById('modalWinnerName').textContent = winner.nome;
@@ -164,16 +247,27 @@
             document.getElementById('modalWinnerCpf').textContent = winner.cpf;
             document.getElementById('modalWinnerWhatsapp').textContent = winner.whatsapp;
             document.getElementById('modalWinnerCode').textContent = winner.codigo_sorteio;
-            winnerChip.textContent = winner.nome;
+            winnerStatus.textContent = 'Vencedor revelado';
+            winnerName.textContent = winner.nome;
+            winnerType.textContent = winner.tipo_participante_label;
+            winnerCode.textContent = winner.codigo_sorteio;
+            winnerChip.textContent = winner.codigo_sorteio;
             winnerSummary.textContent = `${winner.nome} foi sorteado(a) entre ${winner.tipo_participante_label.toLowerCase()} no codigo ${winner.codigo_sorteio}.`;
+            winnerSuspenseState.classList.add('d-none');
+            winnerResultState.classList.remove('d-none');
         };
 
         drawButtons.forEach((drawButton) => {
             drawButton.addEventListener('click', async () => {
+                const previousWinnerState = snapshotWinnerState();
                 const originalLabel = drawButton.textContent;
                 const drawType = drawButton.dataset.type;
-                drawButton.disabled = true;
+                const drawLabel = drawButton.dataset.label;
+                setButtonsAvailability(true);
                 drawButton.textContent = 'Sorteando...';
+                setSuspenseState(drawLabel);
+                winnerModal.show();
+                const suspenseDelay = wait(suspenseDurationMs);
 
                 try {
                     const response = await fetch(`{{ url_for("main.draw_winner") }}?tipo=${drawType}`, {
@@ -187,8 +281,9 @@
                     const payload = await response.json();
 
                     if (!response.ok) {
-                        winnerChip.textContent = 'Sem vencedor';
-                        winnerSummary.textContent = payload.message || 'Nao foi possivel realizar o sorteio.';
+                        winnerModal.hide();
+                        restoreWinnerState(previousWinnerState);
+                        winnerSummary.textContent = payload.message || 'Não foi possível realizar o sorteio.';
                         if (response.status === 401) {
                             window.setTimeout(() => {
                                 window.location.href = '{{ url_for("main.admin_login") }}';
@@ -197,13 +292,14 @@
                         return;
                     }
 
+                    await suspenseDelay;
                     setWinnerContent(payload);
-                    winnerModal.show();
                 } catch (error) {
-                    winnerChip.textContent = 'Erro';
+                    winnerModal.hide();
+                    restoreWinnerState(previousWinnerState);
                     winnerSummary.textContent = 'Falha ao comunicar com o servidor.';
                 } finally {
-                    drawButton.disabled = false;
+                    setButtonsAvailability(false);
                     drawButton.textContent = originalLabel;
                 }
             });
