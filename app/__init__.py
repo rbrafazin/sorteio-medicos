@@ -9,17 +9,20 @@ from .models import db
 csrf = CSRFProtect()
 
 
-
 def create_app() -> Flask:
     app = Flask(__name__)
 
     secret_key = os.getenv("SECRET_KEY")
     if not secret_key:
-        raise ValueError("ERRO FATAL: Variável SECRET_KEY ausente. Defina uma chave secreta forte.")
+        raise ValueError(
+            "ERRO FATAL: Variável SECRET_KEY ausente. Defina uma chave secreta forte."
+        )
 
     admin_username = os.getenv("ADMIN_USERNAME")
     if not admin_username:
-        raise ValueError("ERRO FATAL: Variável ADMIN_USERNAME ausente. Defina o nome do usuário administrativo.")
+        raise ValueError(
+            "ERRO FATAL: Variável ADMIN_USERNAME ausente. Defina o nome do usuário administrativo."
+        )
 
     admin_password = os.getenv("ADMIN_PASSWORD")
     admin_password_hash = os.getenv("ADMIN_PASSWORD_HASH")
@@ -31,7 +34,9 @@ def create_app() -> Flask:
 
     database_url = os.getenv("DATABASE_URL")
     if not database_url:
-        raise ValueError("ERRO FATAL: Variável DATABASE_URL ausente. Por favor, forneça o link do banco PostgreSQL.")
+        raise ValueError(
+            "ERRO FATAL: Variável DATABASE_URL ausente. Por favor, forneça o link do banco PostgreSQL."
+        )
 
     if database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
@@ -60,7 +65,9 @@ def create_app() -> Flask:
 
         if is_ajax:
             if not admin_session_active:
-                return jsonify({"message": "Sua sessao expirou. Faca login novamente."}), 401
+                return jsonify(
+                    {"message": "Sua sessao expirou. Faca login novamente."}
+                ), 401
             return (
                 jsonify(
                     {
@@ -73,7 +80,10 @@ def create_app() -> Flask:
                 400,
             )
 
-        flash("Sua sessao expirou ou o formulario ficou invalido. Tente novamente.", "warning")
+        flash(
+            "Sua sessao expirou ou o formulario ficou invalido. Tente novamente.",
+            "warning",
+        )
         if request.path.startswith("/admin") or request.path.startswith("/sortear"):
             return redirect(url_for("main.admin_login"))
         return redirect(url_for("main.register"))
