@@ -1,12 +1,32 @@
 import os
 
 from flask import Flask, flash, jsonify, redirect, request, session, url_for
+from sqlalchemy import inspect, text
 from flask_wtf.csrf import CSRFError
 from flask_wtf.csrf import CSRFProtect
 
 from .models import db
 
 csrf = CSRFProtect()
+
+
+def ensure_database_updates() -> None:
+    inspector = inspect(db.engine)
+
+    if "doctor_registrations" not in inspector.get_table_names():
+        return
+
+    column_names = {
+        column["name"] for column in inspector.get_columns("doctor_registrations")
+    }
+
+    if "sorteado_em" not in column_names:
+        db.session.execute(
+            text(
+                "ALTER TABLE doctor_registrations ADD COLUMN sorteado_em TIMESTAMP NULL"
+            )
+        )
+        db.session.commit()
 
 
 def create_app() -> Flask:
@@ -90,5 +110,6 @@ def create_app() -> Flask:
 
     with app.app_context():
         db.create_all()
+        ensure_database_updates()
 
     return app

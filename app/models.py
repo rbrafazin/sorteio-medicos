@@ -20,6 +20,7 @@ class DoctorRegistration(db.Model):
     whatsapp = db.Column(db.String(20), nullable=False)
     codigo_sorteio = db.Column(db.String(40), nullable=False, unique=True, index=True)
     criado_em = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    sorteado_em = db.Column(db.DateTime, nullable=True)
 
     @property
     def formatted_cpf(self) -> str:
@@ -40,6 +41,20 @@ class DoctorRegistration(db.Model):
     def display_crm(self) -> str:
         return self.crm if self.tipo_participante == "medico" else "-"
 
+    @property
+    def already_drawn(self) -> bool:
+        return self.sorteado_em is not None
+
+    @property
+    def draw_status_label(self) -> str:
+        return "Ja sorteado" if self.already_drawn else "Disponivel"
+
+    @property
+    def formatted_sorteado_em(self) -> str:
+        if not self.sorteado_em:
+            return "-"
+        return self.sorteado_em.strftime("%d/%m/%Y %H:%M")
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,
@@ -52,4 +67,7 @@ class DoctorRegistration(db.Model):
             "whatsapp": self.whatsapp,
             "codigo_sorteio": self.codigo_sorteio,
             "criado_em": self.criado_em.strftime("%d/%m/%Y %H:%M"),
+            "ja_sorteado": self.already_drawn,
+            "status_sorteio": self.draw_status_label,
+            "sorteado_em": self.formatted_sorteado_em,
         }

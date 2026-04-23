@@ -261,11 +261,13 @@ def admin_panel():
         for registration in registrations
         if registration.tipo_participante == "estudante"
     )
+    drawn_count = sum(1 for registration in registrations if registration.already_drawn)
     return render_template(
         "admin.html",
         registrations=registrations,
         doctor_count=doctor_count,
         student_count=student_count,
+        drawn_count=drawn_count,
     )
 
 
@@ -289,6 +291,8 @@ def export_registrations_csv():
             "WhatsApp",
             "Codigo do Sorteio",
             "Cadastrado em",
+            "Status do Sorteio",
+            "Sorteado em",
         ]
     )
 
@@ -304,6 +308,8 @@ def export_registrations_csv():
                 registration.whatsapp,
                 registration.codigo_sorteio,
                 registration.criado_em.strftime("%d/%m/%Y %H:%M"),
+                registration.draw_status_label,
+                registration.formatted_sorteado_em,
             ]
         )
 
@@ -321,21 +327,28 @@ def export_registrations_csv():
 @admin_login_required
 def draw_winner():
     tipo_participante = request.args.get("tipo", "").strip().lower()
-    query = DoctorRegistration.query
+    eligible_query = DoctorRegistration.query.filter(
+        DoctorRegistration.sorteado_em.is_(None)
+    )
 
     if tipo_participante in {"medico", "estudante"}:
-        query = query.filter_by(tipo_participante=tipo_participante)
+        eligible_query = eligible_query.filter_by(tipo_participante=tipo_participante)
 
-    total = query.count()
+    total = eligible_query.count()
 
     if total == 0:
         if tipo_participante == "medico":
-            message = "Nenhum medico cadastrado para realizar o sorteio."
+            message = (
+                "Nenhum medico disponivel para sorteio. "
+                "Todos ja foram sorteados ou nao ha cadastros."
+            )
         elif tipo_participante == "estudante":
             message = "Nenhum estudante/profissional da saúde cadastrado para realizar o sorteio."
         else:
-            message = "Nenhum cadastro encontrado para realizar o sorteio."
+            message = "Nenhum cadastro disponivel para realizar o sorteio."
         return jsonify({"message": message}), 404
 
-    winner = query.order_by(func.random()).first()
+    winner = eligible_query.order_by(func.random()).first()
+    winner.sorteado_em = datetime.utcnow()
+    db.session.commit()
     return jsonify(winner.to_dict())

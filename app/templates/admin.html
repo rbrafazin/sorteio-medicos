@@ -47,8 +47,8 @@
                             </div>
                             <div class="col-12 col-md-4">
                                 <div class="metric-card">
-                                    <span>Estudantes/Profissionais da Saúde</span>
-                                    <strong>{{ student_count }}</strong>
+                                    <span>Ja Sorteados</span>
+                                    <strong>{{ drawn_count }}</strong>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -85,7 +85,9 @@
                                 <th>CPF</th>
                                 <th>WhatsApp</th>
                                 <th>Codigo do Sorteio</th>
+                                <th>Status</th>
                                 <th>Cadastrado em</th>
+                                <th>Sorteado em</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -99,12 +101,14 @@
                                 <td>{{ registration.formatted_cpf }}</td>
                                 <td>{{ registration.whatsapp }}</td>
                                 <td><span class="table-code">{{ registration.codigo_sorteio }}</span></td>
+                                <td>{{ registration.draw_status_label }}</td>
                                 <td>{{ registration.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
+                                <td>{{ registration.formatted_sorteado_em }}</td>
                             </tr>
                             {% endfor %}
                             {% else %}
                             <tr>
-                                <td colspan="8" class="text-center py-5 text-secondary">
+                                <td colspan="10" class="text-center py-5 text-secondary">
                                     Nenhum participante cadastrado ate o momento.
                                 </td>
                             </tr>
