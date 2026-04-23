@@ -1,5 +1,8 @@
+import csv
+from datetime import datetime
 from functools import wraps
 from io import BytesIO
+from io import StringIO
 import re
 from secrets import randbelow
 from urllib.parse import urljoin, urlsplit
@@ -190,7 +193,7 @@ def register():
         raffle_code = generate_raffle_code(tipo_participante)
         while DoctorRegistration.query.filter_by(codigo_sorteio=raffle_code).first():
             raffle_code = generate_raffle_code(tipo_participante)
-            
+
         registration = DoctorRegistration(
             tipo_participante=tipo_participante,
             nome=form.nome.data.strip(),
@@ -263,6 +266,54 @@ def admin_panel():
         registrations=registrations,
         doctor_count=doctor_count,
         student_count=student_count,
+    )
+
+
+@main_bp.route("/admin/exportar-inscritos.csv")
+@admin_login_required
+def export_registrations_csv():
+    registrations = DoctorRegistration.query.order_by(
+        DoctorRegistration.criado_em.desc()
+    ).all()
+
+    csv_buffer = StringIO()
+    writer = csv.writer(csv_buffer, delimiter=";")
+    writer.writerow(
+        [
+            "ID",
+            "Categoria",
+            "Nome",
+            "CRM",
+            "Email",
+            "CPF",
+            "WhatsApp",
+            "Codigo do Sorteio",
+            "Cadastrado em",
+        ]
+    )
+
+    for registration in registrations:
+        writer.writerow(
+            [
+                registration.id,
+                registration.participant_type_label,
+                registration.nome,
+                registration.display_crm,
+                registration.email or "",
+                registration.formatted_cpf,
+                registration.whatsapp,
+                registration.codigo_sorteio,
+                registration.criado_em.strftime("%d/%m/%Y %H:%M"),
+            ]
+        )
+
+    filename = f"inscritos-sorteio-{datetime.now().strftime('%Y%m%d-%H%M')}.csv"
+    csv_content = "\ufeff" + csv_buffer.getvalue()
+
+    return Response(
+        csv_content,
+        content_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
 
 

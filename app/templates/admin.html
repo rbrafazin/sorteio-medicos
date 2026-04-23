@@ -66,6 +66,13 @@
 
     <div class="col-12">
         <div class="card border-0 surface-card">
+            <div class="card-header bg-transparent border-0 px-4 pt-4 pb-0 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <p class="section-label mb-2">Contingencia</p>
+                    <p class="text-secondary mb-0">Baixe a lista atualizada dos inscritos em CSV para backup.</p>
+                </div>
+                <a class="btn btn-shell" href="{{ url_for('main.export_registrations_csv') }}">Exportar CSV</a>
+            </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table simple-table align-middle mb-0">
