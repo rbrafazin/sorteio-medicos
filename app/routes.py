@@ -1,5 +1,6 @@
 from functools import wraps
 from io import BytesIO
+import re
 from secrets import randbelow
 from urllib.parse import urljoin, urlsplit
 
@@ -38,6 +39,53 @@ def normalize_cpf(value: str) -> str:
 
 def normalize_email(value: str) -> str:
     return value.strip().lower()
+
+
+def get_integrity_error_message(error: IntegrityError) -> str:
+    error_text = str(getattr(error, "orig", error)).lower()
+
+    duplicate_messages = [
+        ("cpf", "Este CPF ja esta cadastrado no sorteio."),
+        ("crm", "Este CRM ja esta cadastrado no sorteio."),
+        ("email", "Este email ja esta cadastrado no sorteio."),
+        (
+            "codigo_sorteio",
+            "Nao foi possivel gerar um codigo unico agora. Tente novamente.",
+        ),
+    ]
+
+    duplicate_key_match = re.search(r"key \(([^)]+)\)=", error_text)
+    if duplicate_key_match:
+        duplicated_field = duplicate_key_match.group(1).strip().lower()
+        for field_name, message in duplicate_messages:
+            if duplicated_field == field_name:
+                return message
+
+    if "duplicate" in error_text or "unique constraint" in error_text:
+        for field_name, message in duplicate_messages:
+            if field_name in error_text:
+                return message
+        return "Ja existe um cadastro com um dado unico repetido."
+
+    null_column_match = re.search(r'null value in column "([^"]+)"', error_text)
+    if null_column_match:
+        column_name = null_column_match.group(1).strip().lower()
+        if column_name == "crm":
+            return (
+                "O banco atual ainda exige CRM para este cadastro. "
+                "Isso costuma indicar estrutura antiga no banco."
+            )
+        if column_name == "email":
+            return (
+                "O banco atual esta exigindo email de um jeito diferente do esperado. "
+                "Verifique a estrutura da tabela."
+            )
+        return (
+            f"O banco esta exigindo o campo {column_name}. "
+            "Verifique se a estrutura da tabela esta atualizada."
+        )
+
+    return "Nao foi possivel salvar o cadastro. Verifique os dados informados."
 
 
 def get_public_form_url() -> str:
@@ -162,12 +210,10 @@ def register():
                 "success",
             )
             return redirect(url_for("main.register"))
-        except IntegrityError:
+        except IntegrityError as error:
             db.session.rollback()
-            flash(
-                "Nao foi possivel salvar o cadastro. Verifique os dados informados.",
-                "danger",
-            )
+            current_app.logger.exception("Erro de integridade ao salvar cadastro")
+            flash(get_integrity_error_message(error), "danger")
 
     return render_template("index.html", form=form)
 

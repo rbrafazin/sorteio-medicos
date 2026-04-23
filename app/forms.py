@@ -106,6 +106,7 @@ class RegistrationForm(FlaskForm):
             "placeholder": "000.000.000-00",
             "inputmode": "numeric",
             "autocomplete": "off",
+            "maxlength": 14,
         },
     )
     whatsapp = StringField(
@@ -124,6 +125,7 @@ class RegistrationForm(FlaskForm):
             "placeholder": "(11) 99999-0000",
             "inputmode": "tel",
             "autocomplete": "tel",
+            "maxlength": 15,
         },
     )
     submit = SubmitField("Confirmar Cadastro")

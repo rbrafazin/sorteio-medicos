@@ -125,8 +125,7 @@
                     </div>
 
                     <div class="d-grid gap-2 mt-4 participant-actions" id="participantActions">
-                        {{ form.submit(class="btn btn-primary btn-lg") }}
-                        <a class="btn btn-shell" href="{{ url_for('main.qr_code_page') }}">Ver QR Code do formulário</a>
+                        {{ form.submit(class="btn btn-brand btn-lg") }}
                     </div>
                 </form>
             </div>
@@ -144,9 +143,42 @@
         const doctorOnlyFields = document.querySelectorAll('.doctor-only');
         const crmField = document.getElementById('{{ form.crm.id }}');
         const ufField = document.getElementById('{{ form.uf.id }}');
+        const cpfField = document.getElementById('{{ form.cpf.id }}');
+        const whatsappField = document.getElementById('{{ form.whatsapp.id }}');
         const categoryNote = document.getElementById('categoryNote');
         const selectionHint = document.getElementById('selectionHint');
         const participantActions = document.getElementById('participantActions');
+
+        const onlyDigits = (value) => (value || '').replace(/\D/g, '');
+
+        const formatCpf = (value) => {
+            const digits = onlyDigits(value).slice(0, 11);
+
+            if (digits.length <= 3) return digits;
+            if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+            if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+            return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+        };
+
+        const formatWhatsapp = (value) => {
+            const digits = onlyDigits(value).slice(0, 11);
+
+            if (digits.length <= 2) return digits ? `(${digits}` : '';
+            if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+            return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+        };
+
+        const applyMask = (field, formatter) => {
+            if (!field) return;
+
+            const syncMaskedValue = () => {
+                field.value = formatter(field.value);
+            };
+
+            field.addEventListener('input', syncMaskedValue);
+            field.addEventListener('blur', syncMaskedValue);
+            syncMaskedValue();
+        };
 
         /* ── Regras de validação por campo ── */
         const validationRules = {
@@ -266,6 +298,9 @@
         });
 
         /* ── Lógica de visibilidade por tipo de participante ── */
+        applyMask(cpfField, formatCpf);
+        applyMask(whatsappField, formatWhatsapp);
+
         const syncParticipantType = () => {
             const hasType = typeField.value === 'medico' || typeField.value === 'estudante';
             const isDoctor = typeField.value === 'medico';
@@ -295,7 +330,7 @@
                 setFieldState(ufField, 'neutral');
                 crmField._touched = false;
                 ufField._touched = false;
-                categoryNote.textContent = 'Para estudantes/profissionais da saúde, o sorteio usa os dados pessoais sem exigir CRM ou UF.';
+                categoryNote.textContent = 'Gerado automaticamente após a confirmação do cadastro.';
                 return;
             }
 

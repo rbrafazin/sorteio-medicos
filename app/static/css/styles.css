@@ -46,14 +46,20 @@ body::before {
 }
 
 .site-brand {
-    letter-spacing: 0.03em;
-    color: var(--primary);
+    display: inline-flex;
+    align-items: center;
     text-decoration: none;
 }
 
 .site-brand:hover,
 .site-brand:focus {
-    color: var(--primary-strong);
+    opacity: 0.92;
+}
+
+.site-brand-logo {
+    display: block;
+    width: auto;
+    height: 56px;
 }
 
 .qr-link {
@@ -73,9 +79,17 @@ body::before {
     padding: 1rem 0.25rem 0;
 }
 
+.page-intro .section-label {
+    color: #1f57c3;
+}
+
+.card-body > .mb-4 .section-label {
+    color: #1f57c3;
+}
+
 .page-title {
     max-width: 12ch;
-    font-size: clamp(2.1rem, 4vw, 3.1rem);
+    font-size: clamp(1.75rem, 3.25vw, 2.4rem);
     line-height: 1;
     letter-spacing: -0.04em;
 }
@@ -83,14 +97,16 @@ body::before {
 .page-copy {
     max-width: 34rem;
     color: var(--muted);
-    font-size: 1.03rem;
+    font-size: 1.14rem;
+    line-height: 1.6;
+    font-weight: 600;
 }
 
 .section-label {
     color: var(--muted);
-    font-size: 0.74rem;
+    font-size: 0.88rem;
     font-weight: 700;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
 }
 
@@ -241,6 +257,19 @@ body::before {
 .btn-primary:focus {
     background: var(--primary-strong);
     border-color: var(--primary-strong);
+}
+
+.btn-brand {
+    color: #fff;
+    background: #1f57c3;
+    border-color: #1f57c3;
+}
+
+.btn-brand:hover,
+.btn-brand:focus {
+    color: #fff;
+    background: #1947a1;
+    border-color: #1947a1;
 }
 
 .btn-warning {
@@ -444,6 +473,7 @@ body::before {
     .winner-modal-card .display-6 {
         font-size: 1.9rem;
     }
+
 }
 
 @media (max-width: 767.98px) {
@@ -452,7 +482,7 @@ body::before {
     }
 
     .page-title {
-        font-size: clamp(1.8rem, 8vw, 2.3rem);
+        font-size: clamp(1.55rem, 6.8vw, 2rem);
         line-height: 1.02;
     }
 
@@ -509,7 +539,11 @@ body::before {
     }
 
     .site-brand {
-        font-size: 1rem;
+        max-width: 172px;
+    }
+
+    .site-brand-logo {
+        height: 44px;
     }
 
     .card-body.p-4.p-lg-5 {

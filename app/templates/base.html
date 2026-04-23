@@ -15,17 +15,22 @@
     <div class="page-shell">
         <nav class="site-header py-3 py-lg-4">
             <div class="container shell-container d-flex align-items-center justify-content-between gap-3">
-                <a class="navbar-brand site-brand fw-semibold" href="{{ url_for('main.register') }}">ABM</a>
+                <a class="navbar-brand site-brand" href="{{ url_for('main.register') }}" aria-label="ABM">
+                    <img
+                        src="{{ url_for('static', filename='img/logo.png') }}"
+                        alt="ABM"
+                        class="site-brand-logo"
+                    >
+                </a>
+                {% if session.get('admin_authenticated') %}
                 <div class="d-flex flex-wrap justify-content-end gap-2">
-                    <a class="btn btn-shell btn-sm qr-link" href="{{ url_for('main.qr_code_page') }}">QR Code</a>
-                    {% if session.get('admin_authenticated') %}
                     <a class="btn btn-primary btn-sm" href="{{ url_for('main.admin_panel') }}">Painel Admin</a>
                     <form method="post" action="{{ url_for('main.admin_logout') }}" class="d-inline">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn btn-shell btn-sm">Sair</button>
                     </form>
-                    {% endif %}
                 </div>
+                {% endif %}
             </div>
         </nav>
 
