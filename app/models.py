@@ -1,6 +1,6 @@
-from datetime import datetime
-
 from flask_sqlalchemy import SQLAlchemy
+
+from .time_utils import format_local_datetime, utc_now
 
 
 db = SQLAlchemy()
@@ -19,7 +19,7 @@ class DoctorRegistration(db.Model):
     cpf = db.Column(db.String(11), nullable=False, unique=True, index=True)
     whatsapp = db.Column(db.String(20), nullable=False)
     codigo_sorteio = db.Column(db.String(40), nullable=False, unique=True, index=True)
-    criado_em = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    criado_em = db.Column(db.DateTime, default=utc_now, nullable=False)
     sorteado_em = db.Column(db.DateTime, nullable=True)
 
     @property
@@ -51,9 +51,7 @@ class DoctorRegistration(db.Model):
 
     @property
     def formatted_sorteado_em(self) -> str:
-        if not self.sorteado_em:
-            return "-"
-        return self.sorteado_em.strftime("%d/%m/%Y %H:%M")
+        return format_local_datetime(self.sorteado_em)
 
     def to_dict(self) -> dict:
         return {
@@ -66,7 +64,7 @@ class DoctorRegistration(db.Model):
             "cpf": self.formatted_cpf,
             "whatsapp": self.whatsapp,
             "codigo_sorteio": self.codigo_sorteio,
-            "criado_em": self.criado_em.strftime("%d/%m/%Y %H:%M"),
+            "criado_em": format_local_datetime(self.criado_em),
             "ja_sorteado": self.already_drawn,
             "status_sorteio": self.draw_status_label,
             "sorteado_em": self.formatted_sorteado_em,

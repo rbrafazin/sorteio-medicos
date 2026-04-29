@@ -40,7 +40,10 @@
             <div class="row justify-content-center mb-4">
                 <div class="col-lg-10">
                     {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} border-0">{{ message }}</div>
+                    <div class="alert alert-{{ category }} alert-dismissible fade show border-0" role="alert" data-flash-category="{{ category }}">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
@@ -54,6 +57,26 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    <script>
+        (() => {
+            const dismissDelays = {
+                success: 4200,
+                warning: 7000,
+            };
+
+            document.querySelectorAll('[data-flash-category]').forEach((alertElement) => {
+                const delay = dismissDelays[alertElement.dataset.flashCategory];
+
+                if (!delay) {
+                    return;
+                }
+
+                window.setTimeout(() => {
+                    bootstrap.Alert.getOrCreateInstance(alertElement).close();
+                }, delay);
+            });
+        })();
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 

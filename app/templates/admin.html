@@ -123,7 +123,7 @@
                                 <td>{{ registration.whatsapp }}</td>
                                 <td><span class="table-code">{{ registration.codigo_sorteio }}</span></td>
                                 <td>{{ registration.draw_status_label }}</td>
-                                <td>{{ registration.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
+                                <td>{{ registration.criado_em | local_datetime }}</td>
                                 <td>{{ registration.formatted_sorteado_em }}</td>
                             </tr>
                             {% endfor %}

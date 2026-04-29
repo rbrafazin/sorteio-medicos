@@ -1,5 +1,4 @@
 import csv
-from datetime import datetime
 from functools import wraps
 from io import BytesIO
 from io import StringIO
@@ -26,6 +25,7 @@ from werkzeug.security import check_password_hash
 
 from .forms import AdminLoginForm, RegistrationForm
 from .models import DoctorRegistration, db
+from .time_utils import format_local_datetime, local_now, utc_now
 
 
 main_bp = Blueprint("main", __name__)
@@ -307,13 +307,13 @@ def export_registrations_csv():
                 registration.formatted_cpf,
                 registration.whatsapp,
                 registration.codigo_sorteio,
-                registration.criado_em.strftime("%d/%m/%Y %H:%M"),
+                format_local_datetime(registration.criado_em),
                 registration.draw_status_label,
                 registration.formatted_sorteado_em,
             ]
         )
 
-    filename = f"inscritos-sorteio-{datetime.now().strftime('%Y%m%d-%H%M')}.csv"
+    filename = f"inscritos-sorteio-{local_now().strftime('%Y%m%d-%H%M')}.csv"
     csv_content = "\ufeff" + csv_buffer.getvalue()
 
     return Response(
@@ -386,6 +386,6 @@ def draw_winner():
         return jsonify({"message": message}), 404
 
     winner = eligible_query.order_by(func.random()).first()
-    winner.sorteado_em = datetime.utcnow()
+    winner.sorteado_em = utc_now()
     db.session.commit()
     return jsonify(winner.to_dict())

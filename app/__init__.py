@@ -6,6 +6,7 @@ from flask_wtf.csrf import CSRFError
 from flask_wtf.csrf import CSRFProtect
 
 from .models import db
+from .time_utils import format_local_datetime
 
 csrf = CSRFProtect()
 
@@ -73,6 +74,7 @@ def create_app() -> Flask:
 
     db.init_app(app)
     csrf.init_app(app)
+    app.jinja_env.filters["local_datetime"] = format_local_datetime
 
     from .routes import main_bp
 
